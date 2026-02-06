@@ -1,0 +1,18 @@
+import { Button, VerticalBox, GridBox, TextEdit } from "std-widgets.slint";
+
+export component AppWindow inherits Window {
+    callback installApp();
+    width: 800px;
+    height: 600px;
+    VerticalBox {
+        TextInput {
+            height: 30px; 
+            font-size: 20px;
+            text: "pesquisa";
+        }
+
+        Text {
+            text: "zzzzzzz";
+        }
+    }
+}
