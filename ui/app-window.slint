@@ -1,18 +1,45 @@
-import { Button, VerticalBox, GridBox, TextEdit } from "std-widgets.slint";
+import { Button, VerticalBox, GridBox, TextEdit, LineEdit, ScrollView } from "std-widgets.slint";
+
+
+
+component App inherits Image {
+    width: 64px;
+    height: 64px;
+    source: @image-url("assets/vscode-image.png");
+    
+    TouchArea {
+        clicked => {
+        }
+    }
+}
+
+component AppSearch inherits VerticalBox { 
+    height: 35px;
+    padding: 0px;
+    LineEdit {
+        width: 100%;
+        height: 33px;
+    }
+}
 
 export component AppWindow inherits Window {
     callback installApp();
     width: 800px;
     height: 600px;
     VerticalBox {
-        TextInput {
-            height: 30px; 
-            font-size: 20px;
-            text: "pesquisa";
+        AppSearch { }
+        ScrollView {
+            GridBox {
+                width: 100%; 
+                height: 100%;
+                Button {
+                    clicked => {
+                    installApp()
+                    }
+                }
+                App {}
+            }
         }
-
-        Text {
-            text: "zzzzzzz";
-        }
+        
     }
 }

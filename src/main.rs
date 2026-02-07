@@ -3,7 +3,10 @@
 
 use std::{error::Error, process::{Command, Stdio}, thread};
 
+use appstream::{Collection, Component, ParseError};
+
 slint::include_modules!();
+
 
 fn main() -> Result<(), Box<dyn Error>> {
     let ui = AppWindow::new()?;
@@ -12,7 +15,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         let _ui_handle = ui.as_weak();
         move || {
             thread::spawn(|| {
-               install_app("code".to_string()); 
+                println!("click");
+               //install_app("code".to_string());
+               _=get_app_info();
             });                        
         }
     });
@@ -43,4 +48,16 @@ fn install_app(app_name: String) {
             println!("sucesso")
         }
     }    
+}
+
+
+fn get_app_info() -> Result<(), ParseError> {
+    let collection = Collection::from_path("/var/lib/flatpak/appstream/flathub/x86_64/active/appstream.xml".into())?;
+    println!("{:?}", collection.find_by_id("code".into()));    
+    let coll = collection.components
+        .iter()
+        .filter(|c| c.extends.contains(&"code".into()))
+        .collect::<Vec<&Component>>();
+    println!("{:?}", coll);
+    Ok(())
 }
