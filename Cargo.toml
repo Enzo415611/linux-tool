@@ -6,8 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-appstream = "0.2.2"
+async-compat = "0.2.5"
+raur = "8.0.0"
 slint = "1.15.0"
+tokio = { version = "1.49.0", features = ["macros", "rt-multi-thread"] }
 
 [build-dependencies]
 slint-build = "1.15.0"
+

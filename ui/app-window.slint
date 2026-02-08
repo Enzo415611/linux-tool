@@ -1,43 +1,61 @@
-import { Button, VerticalBox, GridBox, TextEdit, LineEdit, ScrollView } from "std-widgets.slint";
+import { Button, VerticalBox, GridBox, TextEdit, LineEdit, ScrollView, HorizontalBox, ListView } from "std-widgets.slint";
 
 
 
-component App inherits Image {
-    width: 64px;
-    height: 64px;
-    source: @image-url("assets/vscode-image.png");
-    
-    TouchArea {
-        clicked => {
-        }
-    }
+export global Logic {
+    pure callback search_app(string);
+    in-out property <string> app_name;
+    in-out property <[string]> apps_list;
+    in-out property <string> apps;
 }
 
-component AppSearch inherits VerticalBox { 
+
+component AppSearch inherits VerticalBox {
+    width: 100%; 
     height: 35px;
     padding: 0px;
     LineEdit {
-        width: 100%;
+        width: 600px;
         height: 33px;
+        font-size: 15px;
+        in-out property <string> prop;
+        accepted(text) => {
+            Logic.app_name = text;
+            Logic.search_app(Logic.app_name)
+        }
+        
     }
 }
 
 export component AppWindow inherits Window {
-    callback installApp();
-    width: 800px;
-    height: 600px;
+    preferred-width: 800px;
+    preferred-height: 600px;
     VerticalBox {
-        AppSearch { }
-        ScrollView {
-            GridBox {
-                width: 100%; 
-                height: 100%;
-                Button {
-                    clicked => {
-                    installApp()
+        HorizontalBox {
+        Text {
+            font-size: 18px; 
+            text: "Search Package";
+        }
+            
+            AppSearch { }   
+        }
+        
+        
+        GridBox {
+            width: 100%; 
+            height: 100%;
+            Text {
+                text: Logic.apps;
+            }
+            
+            ListView {
+                height: 100%; 
+                for data in Logic.apps_list: GridBox {
+                    padding: 1px;
+                    Button {
+                        text: data;
                     }
                 }
-                App {}
             }
         }
         
