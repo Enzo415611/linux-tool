@@ -93,7 +93,7 @@ async fn search_pkg(app_name: &String) -> Result<Vec<Package>, raur::Error> {
 }
 
 fn install_pkg(pkg_name: String) -> Result<Child, io::Error> {
-    let output = Command::new("sudo pkexec")
+    let output = Command::new("pkexec")
         .args(["yay", "-S", "--noconfirm" ,pkg_name.as_str()])
         .spawn()?;
     
