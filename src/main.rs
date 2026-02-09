@@ -1,12 +1,18 @@
 // Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod package_control;
+
 use std::{error::Error, io, process::{Child, Command, Output}, rc::Rc};
 
 use raur::{Package, Raur};
 use slint::{ComponentHandle, Model, ModelRc, SharedString, ToSharedString, VecModel};
 
+use crate::package_control::{install_pkg, search_pkg};
+
 slint::include_modules!();
+
+
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -81,21 +87,4 @@ async fn main() -> Result<(), Box<dyn Error>> {
     ui.run()?;
 
     Ok(())
-}
-
-async fn search_pkg(app_name: &String) -> Result<Vec<Package>, raur::Error> {
-    let raur = raur::Handle::new();
-    let pkgs = raur.search(app_name).await?;
-    for pkg in &pkgs {
-        println!("{}", pkg.package_base);
-    }
-    Ok(pkgs)
-}
-
-fn install_pkg(pkg_name: String) -> Result<Child, io::Error> {
-    let output = Command::new("pkexec")
-        .args(["yay", "-S", "--noconfirm" ,pkg_name.as_str()])
-        .spawn()?;
-    
-    Ok(output)
 }

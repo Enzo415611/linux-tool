@@ -1,0 +1,39 @@
+import { TextEdit, Button, VerticalBox } from "std-widgets.slint";
+
+export component PkgInfo inherits VerticalBox {
+    width: 50%;
+    padding: 3px;
+    in-out property <bool> is_visible;
+    in-out property <string> package-base;
+    in-out property <string> version;
+    in-out property <string> description;
+    callback install_pkg(string);
+    HorizontalLayout {
+        Text {
+            font-size: 19px;
+            height: 28px;
+            text: package-base; 
+        }
+        
+        Button {
+            text: "Install";
+            max-width: 10px;
+            clicked => {
+                install_pkg(package-base);
+            }
+        }
+    }
+    
+    
+    Text {        
+        font-size: 15px;
+        height: 28px;
+        text: "Version: " + version; 
+    }
+    
+    TextEdit {
+        text: description;
+        font-size: 15px;
+        enabled: false;
+    }
+}
