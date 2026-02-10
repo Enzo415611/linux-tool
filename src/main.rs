@@ -9,7 +9,7 @@ use std::{error::Error, rc::Rc, time::Duration};
 
 use slint::{ModelRc, SharedString, ToSharedString, VecModel};
 
-use crate::{aur_api::search_pkg_teste, package_control::{install_pkg, search_pkg}};
+use crate::{aur_api::search_pkg, package_control::install_pkg};
 
 slint::include_modules!();
 
@@ -28,45 +28,26 @@ async fn main() -> Result<(), Box<dyn Error>> {
             
             slint::spawn_local(async_compat::Compat::new(async move {
                 let logic = handle.global::<Logic>();
-                _=search_pkg_teste(&app_name).await;
                 _=tokio::time::sleep(Duration::from_millis(700)).await;
-                
-                let pkgs = search_pkg(&app_name.to_string()).await;
+
+                let pkgs = search_pkg(&app_name).await;
                 
                 if let Ok(pkgs) = pkgs {
                     let mut pkgs_info: Vec<PackagesInfo> = vec![];
-
+                    let mut packages_info: PackagesInfo;
                     for pkg in pkgs {
-                        let description = match pkg.description {
-                            Some(d) => d,
-                            None => String::from("NA"),
-                        };
+                        let description = pkg.description;
 
                         let maintainer = match pkg.maintainer {
                             Some(ma) => ma,
                             None => String::from("NA"),
                         };
 
-                        let mut co_maintainers: ModelRc<SharedString> = ModelRc::default();
-
-                        for cm in pkg.co_maintainers {
-                            co_maintainers =
-                                ModelRc::new(VecModel::from(vec![cm.to_shared_string()]));
-                        }
-
-                        let mut depends: ModelRc<SharedString> = ModelRc::default();
-
-                        for depe in pkg.depends {
-                            depends = ModelRc::new(VecModel::from(vec![depe.to_shared_string()]));
-                        }
-
-                        let packages_info = PackagesInfo {
+                        packages_info = PackagesInfo {
                             package_base: pkg.package_base.into(),
                             version: pkg.version.into(),
                             description: description.into(),
                             maintainer: maintainer.into(),
-                            co_maintainers: co_maintainers,
-                            depends: depends,
                         };
 
                         pkgs_info.push(packages_info);
