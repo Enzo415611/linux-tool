@@ -5,9 +5,6 @@ use raur::{Package, Raur};
 pub async fn search_pkg(app_name: &String) -> Result<Vec<Package>, raur::Error> {
     let raur = raur::Handle::new();
     let pkgs = raur.search(app_name).await?;
-    for pkg in &pkgs {
-        println!("{}", pkg.package_base);
-    }
     Ok(pkgs)
 }
 

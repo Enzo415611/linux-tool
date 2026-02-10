@@ -2,12 +2,14 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod package_control;
+mod aur_api;
+
 
 use std::{error::Error, rc::Rc, time::Duration};
 
 use slint::{ModelRc, SharedString, ToSharedString, VecModel};
 
-use crate::package_control::{install_pkg, search_pkg};
+use crate::{aur_api::search_pkg_teste, package_control::{install_pkg, search_pkg}};
 
 slint::include_modules!();
 
@@ -26,7 +28,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             
             slint::spawn_local(async_compat::Compat::new(async move {
                 let logic = handle.global::<Logic>();
-                
+                _=search_pkg_teste(&app_name).await;
                 _=tokio::time::sleep(Duration::from_millis(700)).await;
                 
                 let pkgs = search_pkg(&app_name.to_string()).await;

@@ -9,6 +9,7 @@ edition = "2021"
 async-compat = "0.2.5"
 raur = "8.0.0"
 reqwest = "0.13.2"
+serde = {version = "1.0.228", features = ["derive"]}
 slint = "1.15.0"
 tokio = { version = "1.49.0", features = ["macros", "rt-multi-thread"] }
 
