@@ -3,17 +3,19 @@ import { PackagesInfo } from "logic.slint";
 
 export component PkgList inherits ListView {
     height: 92%; 
+    
     in-out property <[PackagesInfo]> pkgs_info;
-    in-out property <PackagesInfo> pkg_selected;
-    in-out property <bool> pkg_info_is_visible;
+    callback pkg_selected(PackagesInfo);
+    callback pkg_info_is_visible(bool);
+    
     for pkg in pkgs_info: GridBox {
         padding: 1px;
         
         Button {
             text: pkg.package-base;
             clicked => {
-                pkg_selected = pkg;
-                pkg_info_is_visible = true;                
+                pkg_selected(pkg);
+                pkg_info_is_visible(true);
             }
         }
     }

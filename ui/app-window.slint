@@ -6,46 +6,51 @@ import { PkgInfo } from "pkg-info.slint";
 
 
 export global Logic {
-    callback search_pkg(string);
-    callback install_pkg(pkg_name:string);
     in-out property <string> pkg_name;
     in-out property <[PackagesInfo]> pkgs_info;
     in-out property <PackagesInfo> pkg_selected;
     in-out property <bool> pkg_info_is_visible;
+    callback search_pkg(string);
+    callback install_pkg(string);
 }
 
 export component AppWindow inherits Window {
     preferred-width: 800px;
     preferred-height: 600px;
-    VerticalBox {
-        HorizontalBox {
-            Text {
-                font-size: 18px; 
-                text: "Search Package";
-            }
-            PkgSearch {
-                search_pkg(name) => {
-                    Logic.pkg_name = name;
-                    Logic.search_pkg(name);
-                    name
-                };
-            } 
+    padding: 10px;
+    
+    VerticalLayout {
+        PkgSearch {
+            search_pkg(name) => {
+                Logic.pkg_name = name;
+                Logic.search_pkg(name);
+            };
         }
-        
-        
+    
         
         GridBox {
             width: 100%; 
-            height: 100%;
-            
+            height: 100%;        
             PkgList {
-                pkg_info_is_visible: Logic.pkg_info_is_visible;
-                pkg_selected: Logic.pkg_selected;
                 pkgs_info: Logic.pkgs_info;
+                pkg_selected(pkg-selected) => {
+                    Logic.pkg_selected = pkg-selected;    
+                }
+                pkg_info_is_visible(is) => {
+                    Logic.pkg_info_is_visible = is;
+                }
             }
-            PkgInfo {}
+                
+            PkgInfo {
+                is_visible: Logic.pkg_info_is_visible;
+                package-base: Logic.pkg_selected.package-base;
+                version: Logic.pkg_selected.version;
+                description: Logic.pkg_selected.description;
+                install_pkg => {
+                    Logic.install_pkg(Logic.pkg_selected.package-base);
+                }
+            }
         }
-        
     }
 }
 

@@ -3,11 +3,14 @@ import { TextEdit, Button, VerticalBox } from "std-widgets.slint";
 export component PkgInfo inherits VerticalBox {
     width: 50%;
     padding: 3px;
-    in-out property <bool> is_visible;
+    visible: is_visible;
+    
+    in-out property <bool> is_visible: false;
     in-out property <string> package-base;
     in-out property <string> version;
     in-out property <string> description;
     callback install_pkg(string);
+    
     HorizontalLayout {
         Text {
             font-size: 19px;

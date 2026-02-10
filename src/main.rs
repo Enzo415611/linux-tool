@@ -3,10 +3,9 @@
 
 mod package_control;
 
-use std::{error::Error, io, process::{Child, Command, Output}, rc::Rc};
+use std::{error::Error, rc::Rc, time::Duration};
 
-use raur::{Package, Raur};
-use slint::{ComponentHandle, Model, ModelRc, SharedString, ToSharedString, VecModel};
+use slint::{ModelRc, SharedString, ToSharedString, VecModel};
 
 use crate::package_control::{install_pkg, search_pkg};
 
@@ -24,12 +23,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     logic.on_search_pkg({
         move |app_name| {
             let handle = ui_handle.unwrap();
-
+            
             slint::spawn_local(async_compat::Compat::new(async move {
                 let logic = handle.global::<Logic>();
-
+                
+                _=tokio::time::sleep(Duration::from_millis(700)).await;
+                
                 let pkgs = search_pkg(&app_name.to_string()).await;
-
+                
                 if let Ok(pkgs) = pkgs {
                     let mut pkgs_info: Vec<PackagesInfo> = vec![];
 
@@ -72,15 +73,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     let the_model = Rc::new(VecModel::from(pkgs_info));
                     logic.set_pkgs_info(ModelRc::from(the_model));
                 }
-
-                println!("{:?}", app_name.clone());
             }))
             .unwrap();
         }
     });
     
     logic.on_install_pkg(|pkg_name| {
-        println!("{}", pkg_name);
         println!("{:?}", install_pkg(pkg_name.into()));
     });
 

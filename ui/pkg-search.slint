@@ -1,12 +1,15 @@
-import { LineEdit, VerticalBox } from "std-widgets.slint";
+import { HorizontalBox, VerticalBox, LineEdit, Button } from "std-widgets.slint";
 
-export component PkgSearch inherits VerticalBox {
-    width: 100%; 
+
+export component PkgSearch inherits HorizontalBox {
+    padding: 5px;
     height: 35px;
-    padding: 0px;
-    callback search_pkg(string) -> string;
+    alignment: LayoutAlignment.end;
+    in-out property <string> pkg_name;
+    callback search_pkg(string);
+    
     LineEdit {
-        width: 600px;
+        width: 700px;
         height: 33px;
         font-size: 15px;
         placeholder-text: "Package Name";
@@ -14,6 +17,27 @@ export component PkgSearch inherits VerticalBox {
         accepted(text) => {
             search_pkg(text);
         }
+        edited(text) => {
+            pkg_name = text; 
+        }
+    }
+    
+    Rectangle {
+        width: 30px; 
+        height: 33px;
+        border-color: gray;
+        border-width: 0.1px;
+        border-radius: 5px;
+        background: gray;
+        Image {
+            source: @image-url("assets/search.png");            
+        }
         
+        TouchArea {
+            clicked => {
+                search_pkg(pkg_name);
+
+            }
+        }
     }
 }
