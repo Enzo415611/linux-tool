@@ -1,11 +1,9 @@
 // vou usar a crate reqwest para pesquisa no aur para aumentar a velocidade da pesquisa
 // aur api: https://aur.archlinux.org/rpc/?v=5&type=search&arg=firefox
 
-use std::{future::Future, task::Poll, time::Duration};
-
-use reqwest::{StatusCode};
 use serde::{Deserialize, Serialize};
-use tokio::{sync::mpsc::OwnedPermit, time::sleep};
+
+use crate::AppState;
 
 #[derive(Deserialize, Debug, Default)]
 struct AurResponse {
@@ -20,7 +18,7 @@ struct AurResponse {
 
 
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Package {
     #[serde(rename = "Description")]
     pub description: String, 
@@ -102,22 +100,16 @@ impl Package {
 }
 
 
-pub async fn search_pkg(pkg_name: &str) -> Result<Vec<Package>, reqwest::Error> {
-    let mut last_name: String = "".to_string();
-    
-    // if last_name == pkg_name {
-    //     return Ok(vec![]);
-    //     println!("igual");
-    // } else {
-    //     println!("foi");
-    //     last_name = pkg_name.into();
+pub async fn search_pkg(pkg_name: &str, app_state: &mut AppState) -> Result<Vec<Package>, reqwest::Error> {
+    if app_state.last_name == pkg_name {
+        Ok(app_state.last_packages.clone())
+    } else {
+        app_state.last_name = pkg_name.into();
+        let result: AurResponse = reqwest::get(format!("https://aur.archlinux.org/rpc/?v=5&type=search&arg={}", pkg_name))
+            .await?
+            .json::<AurResponse>()
+            .await?;
         
-    // }
-    
-    let result: AurResponse = reqwest::get(format!("https://aur.archlinux.org/rpc/?v=5&type=search&arg={}", pkg_name))
-        .await?
-        .json::<AurResponse>()
-        .await?;
-    Ok(result.results)
-    
+        Ok(result.results)
+    }
 }
