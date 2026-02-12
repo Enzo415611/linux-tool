@@ -38,22 +38,27 @@ async fn main() -> Result<(), Box<dyn Error>> {
     
     logic.on_search_pkg({
         move |app_name| {
-            
             let handle = ui_handle.unwrap();
             let app_state = Arc::clone(&app_state_arc);
             
             slint::spawn_local(async_compat::Compat::new(async move {
                 let logic = handle.global::<Logic>();
                 _=tokio::time::sleep(Duration::from_millis(700)).await;
-
-                let pkgs = search_pkg(&app_name, &mut app_state.lock().unwrap()).await;
+                
+                let pkgs = {
+                    let mut state = app_state.lock().unwrap();
+                    search_pkg(&app_name, &mut state).await
+                };
                 
                 if let Ok(pkgs) = pkgs {
                     let mut pkgs_info: Vec<PackagesInfo> = vec![];
                     let mut packages_info: PackagesInfo;
 
                     for pkg in &pkgs {
-                        let description = &pkg.description;
+                        let description = match &pkg.description {
+                            Some(dis) => dis,
+                            None => &String::from("NA"),
+                        };
 
                         let maintainer = match &pkg.maintainer {
                             Some(ma) => ma,

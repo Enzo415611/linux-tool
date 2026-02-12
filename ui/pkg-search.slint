@@ -4,7 +4,7 @@ import { HorizontalBox, VerticalBox, LineEdit, Button } from "std-widgets.slint"
 export component PkgSearch inherits HorizontalBox {
     padding: 5px;
     height: 35px;
-    alignment: LayoutAlignment.end;
+    alignment: LayoutAlignment.start;
     in-out property <string> pkg_name;
     callback search_pkg(string);
     
@@ -12,7 +12,7 @@ export component PkgSearch inherits HorizontalBox {
         width: 700px;
         height: 33px;
         font-size: 15px;
-        placeholder-text: "Package Name";
+        placeholder-text: "Search Packages";
         in-out property <string> prop;
         accepted(text) => {
             search_pkg(text);

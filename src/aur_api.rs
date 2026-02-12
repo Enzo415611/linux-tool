@@ -21,16 +21,16 @@ struct AurResponse {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Package {
     #[serde(rename = "Description")]
-    pub description: String, 
+    pub description: Option<String>, 
     
     #[serde(rename = "FirstSubmitted")]
-    pub first_submitted: i32,
+    pub first_submitted: i64,
     
     #[serde(rename = "ID")]
     pub id: i32,
     
     #[serde(rename = "LastModified")]
-    pub last_modified: i32,
+    pub last_modified: i64,
     
     #[serde(rename = "Maintainer")]
     pub maintainer: Option<String>,
@@ -54,7 +54,7 @@ pub struct Package {
     pub popularity: f64,
     
     #[serde(rename = "URL")]
-    pub url: String,
+    pub url: Option<String>,
     
     #[serde(rename = "URLPath")]
     pub url_path: String,
@@ -65,10 +65,10 @@ pub struct Package {
 
 impl Package {
     fn new(
-        description: String,
-        first_submitted: i32,
+        description: Option<String>,
+        first_submitted: i64,
         id: i32,
-        last_modified: i32,
+        last_modified: i64,
         maintainer: Option<String>,
         name: String,
         num_votes: i32,
@@ -76,7 +76,7 @@ impl Package {
         package_base: String,
         package_base_id: i32,
         popularity: f64,
-        url: String,
+        url: Option<String>,
         url_path: String,
         version: String        
     ) -> Self {
