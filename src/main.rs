@@ -9,7 +9,7 @@ use std::{error::Error, rc::Rc, sync::{Arc, Mutex}, time::Duration};
 
 use slint::{ModelRc, VecModel};
 
-use crate::{aur_api::{Package, search_pkg}, package_control::install_pkg};
+use crate::{aur_api::{Package, search_pkg}, package_control::{install_pkg, pkg_is_installed}};
 
 slint::include_modules!();
 
@@ -89,6 +89,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
         println!("{:?}", install_pkg(pkg_name.into()));
     });
 
+    logic.on_pkg_selected_callback(|pkg_name| {
+        let pkg_name =  pkg_name.to_string();
+        
+        _=pkg_is_installed(pkg_name);
+    });
+    
     ui.run()?;
 
     Ok(())

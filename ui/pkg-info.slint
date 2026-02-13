@@ -1,9 +1,36 @@
 import { TextEdit, Button, VerticalBox } from "std-widgets.slint";
 
+component CustomButton inherits Rectangle {
+    callback clicked();
+    property <color> default_back_color;
+    border-radius: 8px;
+    border-width: 0.2px;
+    
+    in-out property <string> text;
+    
+    
+    
+    background: area.has-hover ? gray.transparentize(0.8) : default_back_color;
+    
+    Text {
+        font-size: 14px;
+        text: text; 
+    }
+    
+    area := TouchArea {
+        clicked => {
+            clicked()
+        }
+    }
+}
+
+
+
 export component PkgInfo inherits VerticalBox {
     width: 50%;
     padding: 3px;
     visible: is_visible;
+    
     
     in-out property <bool> is_visible: false;
     in-out property <string> package-base;
@@ -14,19 +41,28 @@ export component PkgInfo inherits VerticalBox {
     callback install_pkg(string);
     
     HorizontalLayout {
+        spacing: 10px;
+    
         Text {
             font-size: 19px;
             height: 28px;
             text: package-base; 
         }
         
-        Button {
+        CustomButton {
             text: "Install";
-            max-width: 10px;
             clicked => {
                 install_pkg(package-base);
             }
         }
+        
+        CustomButton {
+            text: "Uninstall";
+            clicked => {
+                install_pkg(package-base)
+            }
+        }
+        
     }
     
     
