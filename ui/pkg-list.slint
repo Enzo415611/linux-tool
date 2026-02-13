@@ -1,22 +1,49 @@
-import { Button, GridBox, ListView } from "std-widgets.slint";
+import { Button, GridBox, ListView, VerticalBox } from "std-widgets.slint";
 import { PackagesInfo } from "logic.slint";
 
 export component PkgList inherits ListView {
     height: 92%; 
-    
     in-out property <[PackagesInfo]> pkgs_info;
+    
     callback pkg_selected(PackagesInfo);
     callback pkg_info_is_visible(bool);
     
-    for pkg in pkgs_info: GridBox {
-        padding: 1px;
-        
-        Button {
-            text: pkg.package-base;
-            clicked => {
-                pkg_selected(pkg);
-                pkg_info_is_visible(true);
+    
+    for pkg in pkgs_info: HorizontalLayout {
+        padding: 5px;        
+        in-out property <color> back;
+        Rectangle {
+            border-width: 0.2px;
+            border-radius: 10px;
+            background: area.has-hover ? gray.transparentize(0.8) : back;
+
+            animate background {
+                duration: 250ms;
+            }
+            Text {
+                font-size: 15px;
+                text: pkg.package-base;
+            }
+
+            area := TouchArea {
+                clicked => {
+                    pkg_selected(pkg);
+                    pkg_info_is_visible(true);
+                }
             }
         }
+
+        
+
+        //border-color: #60CDFF;            
+
+        
     }
 }
+
+
+// text: pkg.package-base;
+// clicked => {
+//     pkg_selected(pkg);
+//     pkg_info_is_visible(true);
+// }

@@ -9,6 +9,8 @@ export component PkgInfo inherits VerticalBox {
     in-out property <string> package-base;
     in-out property <string> version;
     in-out property <string> description;
+    in-out property <string> maintainer;
+
     callback install_pkg(string);
     
     HorizontalLayout {
@@ -32,6 +34,12 @@ export component PkgInfo inherits VerticalBox {
         font-size: 15px;
         height: 28px;
         text: "Version: " + version; 
+    }
+    
+    Text {
+        font-size: 15px;
+        height: 28px;
+        text: "Maintainer: " + maintainer;
     }
     
     TextEdit {

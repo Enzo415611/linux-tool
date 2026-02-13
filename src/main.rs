@@ -74,7 +74,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
                         pkgs_info.push(packages_info);
                     }
-
+                    
                     app_state.lock().unwrap().last_packages = pkgs;
 
                     let the_model = Rc::new(VecModel::from(pkgs_info));

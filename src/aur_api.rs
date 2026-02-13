@@ -63,43 +63,6 @@ pub struct Package {
     pub version: String,
 }
 
-impl Package {
-    fn new(
-        description: Option<String>,
-        first_submitted: i64,
-        id: i32,
-        last_modified: i64,
-        maintainer: Option<String>,
-        name: String,
-        num_votes: i32,
-        out_of_date: Option<i64>,
-        package_base: String,
-        package_base_id: i32,
-        popularity: f64,
-        url: Option<String>,
-        url_path: String,
-        version: String        
-    ) -> Self {
-        Self { 
-            description,
-            first_submitted,
-            id,
-            last_modified,
-            maintainer,
-            name,
-            num_votes,
-            out_of_date,
-            package_base,
-            package_base_id,
-            popularity,
-            url,
-            url_path,
-            version
-        }
-    }
-}
-
-
 pub async fn search_pkg(pkg_name: &str, app_state: &mut AppState) -> Result<Vec<Package>, reqwest::Error> {
     if app_state.last_name == pkg_name {
         Ok(app_state.last_packages.clone())

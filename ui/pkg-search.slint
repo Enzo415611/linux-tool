@@ -5,7 +5,10 @@ export component PkgSearch inherits HorizontalBox {
     padding: 5px;
     height: 35px;
     alignment: LayoutAlignment.start;
+
     in-out property <string> pkg_name;
+    in-out property <color> back;
+
     callback search_pkg(string);
     
     LineEdit {
@@ -13,7 +16,9 @@ export component PkgSearch inherits HorizontalBox {
         height: 33px;
         font-size: 15px;
         placeholder-text: "Search Packages";
+        
         in-out property <string> prop;
+
         accepted(text) => {
             search_pkg(text);
         }
@@ -25,18 +30,22 @@ export component PkgSearch inherits HorizontalBox {
     Rectangle {
         width: 30px; 
         height: 33px;
-        border-color: gray;
         border-width: 0.1px;
-        border-radius: 5px;
-        background: gray;
+        border-radius: 8px;
+        background: area.has-hover ? white.transparentize(0.8) : back;
+        
+        animate background {
+            duration: 250ms;
+        }
+
         Image {
+            colorize: white;
             source: @image-url("assets/search.png");            
         }
         
-        TouchArea {
+        area := TouchArea {
             clicked => {
                 search_pkg(pkg_name);
-
             }
         }
     }

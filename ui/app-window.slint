@@ -10,6 +10,7 @@ export global Logic {
     in-out property <[PackagesInfo]> pkgs_info;
     in-out property <PackagesInfo> pkg_selected;
     in-out property <bool> pkg_info_is_visible;
+
     callback search_pkg(string);
     callback install_pkg(string);
 }
@@ -46,6 +47,8 @@ export component AppWindow inherits Window {
                 package-base: Logic.pkg_selected.package-base;
                 version: Logic.pkg_selected.version;
                 description: Logic.pkg_selected.description;
+                maintainer: Logic.pkg_selected.maintainer;
+                
                 install_pkg => {
                     Logic.install_pkg(Logic.pkg_selected.package-base);
                 }
