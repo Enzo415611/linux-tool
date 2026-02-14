@@ -3,15 +3,21 @@ import { TextEdit, Button, VerticalBox } from "std-widgets.slint";
 component CustomButton inherits Rectangle {
     callback clicked();
     property <color> default_back_color;
+    in-out property <string> text;
+    in-out property <image> icon;
+    
+
     border-radius: 8px;
     border-width: 0.2px;
-    
-    in-out property <string> text;
-    
+
     
     
     background: area.has-hover ? gray.transparentize(0.8) : default_back_color;
     
+    Image {
+        source: icon;
+    }
+
     Text {
         font-size: 14px;
         text: text; 
@@ -25,19 +31,34 @@ component CustomButton inherits Rectangle {
 }
 
 
+component Terminal {
+    height: 400px;
+    in-out property <bool> terminal_is_visible: false;
+    in-out property <string> output;
+
+    VerticalBox {
+        TextEdit {
+            enabled: false;
+            text: output;
+        }
+    }
+}
+
 
 export component PkgInfo inherits VerticalBox {
     width: 50%;
     padding: 3px;
-    visible: is_visible;
+    visible: pkg_info_is_visible;
     
     
-    in-out property <bool> is_visible: false;
+    in-out property <bool> pkg_info_is_visible: false;
     in-out property <string> package-base;
     in-out property <string> version;
     in-out property <string> description;
     in-out property <string> maintainer;
+    in-out property <string> terminal_output;
 
+    
     callback install_pkg(string);
     
     HorizontalLayout {
@@ -57,9 +78,11 @@ export component PkgInfo inherits VerticalBox {
         }
         
         CustomButton {
-            text: "Uninstall";
+            icon: @image-url("assets/square-terminal.png");
+            width: 30px;
+            background: gray;
             clicked => {
-                install_pkg(package-base)
+                debug(terminal_output);
             }
         }
         
@@ -82,5 +105,9 @@ export component PkgInfo inherits VerticalBox {
         text: description;
         font-size: 15px;
         enabled: false;
+    }
+
+    Terminal {
+        output: terminal_output;
     }
 }

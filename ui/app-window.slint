@@ -1,5 +1,5 @@
 import { PackagesInfo } from "logic.slint";
-import { Button, VerticalBox, GridBox, TextEdit, LineEdit, ScrollView, HorizontalBox, ListView } from "std-widgets.slint";
+import { Button, VerticalBox, GridBox, TextEdit, LineEdit, ScrollView, HorizontalBox, ListView, Button } from "std-widgets.slint";
 import { PkgSearch } from "pkg-search.slint";
 import { PkgList } from "pkg-list.slint";
 import { PkgInfo } from "pkg-info.slint";
@@ -10,6 +10,8 @@ export global Logic {
     in-out property <[PackagesInfo]> pkgs_info;
     in-out property <PackagesInfo> pkg_selected;
     in-out property <bool> pkg_info_is_visible;
+    in-out property <string> terminal_output;
+
 
     callback search_pkg(string);
     callback install_pkg(string);
@@ -19,9 +21,10 @@ export global Logic {
 export component AppWindow inherits Window {
     preferred-width: 800px;
     preferred-height: 600px;
-    padding: 10px;
     
+
     VerticalLayout {
+
         PkgSearch {
             search_pkg(name) => {
                 Logic.pkg_name = name;
@@ -32,33 +35,55 @@ export component AppWindow inherits Window {
         
         GridBox {
             width: 100%; 
-            height: 100%;        
             
             PkgList {
             
                 pkgs_info: Logic.pkgs_info;
+                
                 pkg_selected(pkg-selected) => {
                     Logic.pkg_selected = pkg-selected;    
                     Logic.pkg_selected_callback(pkg-selected.package-base);
                 }
+
                 pkg_info_is_visible(is) => {
                     Logic.pkg_info_is_visible = is;
                 }
+
             }
                 
-            PkgInfo {
-            
-                is_visible: Logic.pkg_info_is_visible;
+            PkgInfo {                
+                pkg_info_is_visible: Logic.pkg_info_is_visible;
                 package-base: Logic.pkg_selected.package-base;
                 version: Logic.pkg_selected.version;
                 description: Logic.pkg_selected.description;
                 maintainer: Logic.pkg_selected.maintainer;
+                terminal_output: Logic.terminal_output;
                 
                 install_pkg => {
                     Logic.install_pkg(Logic.pkg_selected.package-base);
                 }
             }
         }
+
+        // HorizontalBox {
+        //     padding: 0px;
+        //     alignment: LayoutAlignment.end;
+            
+        //     Rectangle {
+        //         height: 20px;
+        //         width: 100%;
+        //         border-width: 0.3px;
+        //         border-color: gray;
+
+        //         HorizontalLayout {
+        //             alignment: LayoutAlignment.end;
+        //             Button {
+        //                 text: "Terminal";
+        //             }
+        //         }  
+
+        //     }
+        // }
     }
 }
 
