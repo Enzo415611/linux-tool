@@ -11,8 +11,10 @@ export global Logic {
     in-out property <PackagesInfo> pkg_selected;
     in-out property <bool> pkg_info_is_visible;
     in-out property <string> terminal_output;
+    in-out property <string> terminal_input;
+    in-out property <bool> terminal_is_visible: false;
 
-
+    callback send_terminal_input(string);
     callback search_pkg(string);
     callback install_pkg(string);
     callback pkg_selected_callback(string);
@@ -58,10 +60,19 @@ export component AppWindow inherits Window {
                 description: Logic.pkg_selected.description;
                 maintainer: Logic.pkg_selected.maintainer;
                 terminal_output: Logic.terminal_output;
+                terminal_is_visible: Logic.terminal_is_visible;
                 
+                send_terminal_input(text) => {
+                    Logic.terminal_input = text;
+                    Logic.send_terminal_input(text);
+                }
+
                 install_pkg => {
                     Logic.install_pkg(Logic.pkg_selected.package-base);
+                    Logic.terminal_is_visible = true;
                 }
+
+                
             }
         }
 

@@ -7,9 +7,7 @@ mod terminal;
 mod search_callback;
 
 
-use std::{env, error::Error, io::{Write}, sync::{Arc, Mutex}};
-
-use portable_pty::{PtySize, native_pty_system};
+use std::{env, error::Error, sync::{Arc, Mutex}};
 
 use crate::{aur_api::Package, package_control::{pkg_is_installed}, search_callback::search_pkg_callback, terminal::terminal};
 
@@ -41,13 +39,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let ui_handle = ui.as_weak();
     search_pkg_callback(&logic, ui_handle, app_state_arc);
     
-
+    
 
     logic.on_pkg_selected_callback(|pkg_name| {
         let pkg_name =  pkg_name.to_string();
         _=pkg_is_installed(pkg_name);
     });
-
 
     // terminal
     let ui_handle = ui.as_weak();

@@ -7,14 +7,14 @@ use crate::AppState;
 
 #[derive(Deserialize, Debug, Default)]
 struct AurResponse {
-    pub resultcount: u32,
+    pub _resultcount: u32,
     pub results: Vec<Package>,
     
     #[serde(rename = "type")]
-    pub response_type: String,
+    pub _response_type: String,
     
     #[warn(unused)]
-    pub version: u8,
+    pub _version: u8,
 }
 
 

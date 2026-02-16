@@ -1,4 +1,4 @@
-import { TextEdit, Button, VerticalBox } from "std-widgets.slint";
+import { TextEdit, Button, VerticalBox, LineEdit } from "std-widgets.slint";
 
 component CustomButton inherits Rectangle {
     callback clicked();
@@ -31,16 +31,22 @@ component CustomButton inherits Rectangle {
 }
 
 
-component Terminal {
+component Terminal inherits VerticalBox{
     height: 400px;
-    in-out property <bool> terminal_is_visible: false;
+    
     in-out property <string> output;
+    callback send_terminal_input(string);
 
-    VerticalBox {
-        TextEdit {
-            enabled: false;
-            text: output;
+    TextEdit {
+        text: output;
+        read-only: true;
+    }
+
+    LineEdit {
+        accepted(text) => {
+            send_terminal_input(text);
         }
+
     }
 }
 
@@ -57,10 +63,11 @@ export component PkgInfo inherits VerticalBox {
     in-out property <string> description;
     in-out property <string> maintainer;
     in-out property <string> terminal_output;
-
+    in-out property <bool> terminal_is_visible;
     
     callback install_pkg(string);
-    
+    callback send_terminal_input(string);
+
     HorizontalLayout {
         spacing: 10px;
     
@@ -82,7 +89,7 @@ export component PkgInfo inherits VerticalBox {
             width: 30px;
             background: gray;
             clicked => {
-                debug(terminal_output);
+                terminal_is_visible = !terminal_is_visible;
             }
         }
         
@@ -109,5 +116,9 @@ export component PkgInfo inherits VerticalBox {
 
     Terminal {
         output: terminal_output;
+        visible: terminal_is_visible;
+        send_terminal_input(text) => {
+            send_terminal_input(text);
+        }
     }
 }
