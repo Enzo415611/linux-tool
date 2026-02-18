@@ -1,4 +1,6 @@
 import { TextEdit, Button, VerticalBox, LineEdit } from "std-widgets.slint";
+import { Terminal } from "terminal.slint";
+
 
 component CustomButton inherits Rectangle {
     callback clicked();
@@ -31,24 +33,7 @@ component CustomButton inherits Rectangle {
 }
 
 
-component Terminal inherits VerticalBox{
-    height: 400px;
-    
-    in-out property <string> output;
-    callback send_terminal_input(string);
 
-    TextEdit {
-        text: output;
-        read-only: true;
-    }
-
-    LineEdit {
-        accepted(text) => {
-            send_terminal_input(text);
-        }
-
-    }
-}
 
 
 export component PkgInfo inherits VerticalBox {
@@ -85,7 +70,7 @@ export component PkgInfo inherits VerticalBox {
         }
         
         CustomButton {
-            icon: @image-url("assets/square-terminal.png");
+            icon: @image-url("../../assets/square-terminal.png");
             width: 30px;
             background: gray;
             clicked => {

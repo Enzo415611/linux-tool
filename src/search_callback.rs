@@ -20,6 +20,8 @@ pub fn search_pkg_callback(logic: &Logic<'_>, ui_handle: Weak<AppWindow>, app_st
                     search_pkg(&app_name, &mut state).await
                 };
                 
+                println!("{:?}", pkgs);
+                
                 if let Ok(pkgs) = pkgs {
                     let mut pkgs_info: Vec<PackagesInfo> = vec![];
                     let mut packages_info: PackagesInfo;
@@ -41,7 +43,7 @@ pub fn search_pkg_callback(logic: &Logic<'_>, ui_handle: Weak<AppWindow>, app_st
                             description: description.into(),
                             maintainer: maintainer.into(),
                         };
-
+                        
                         pkgs_info.push(packages_info);
                     }
                     

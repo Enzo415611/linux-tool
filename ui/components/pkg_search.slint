@@ -16,9 +16,7 @@ export component PkgSearch inherits HorizontalBox {
         height: 33px;
         font-size: 15px;
         placeholder-text: "Search Packages";
-        
-        in-out property <string> prop;
-
+    
         accepted(text) => {
             search_pkg(text);
         }
@@ -40,7 +38,7 @@ export component PkgSearch inherits HorizontalBox {
 
         Image {
             colorize: white;
-            source: @image-url("assets/search.png");            
+            source: @image-url("../assets/search.png");            
         }
         
         area := TouchArea {

@@ -1,0 +1,21 @@
+import { VerticalBox, TextEdit, LineEdit } from "std-widgets.slint";
+
+
+export component Terminal inherits VerticalBox {
+    height: 400px;
+    
+    in-out property <string> output;
+    callback send_terminal_input(string);
+
+    TextEdit {
+        text: output;
+        read-only: true;
+    }
+
+    LineEdit {
+        accepted(text) => {
+            send_terminal_input(text);
+        }
+
+    }
+}
