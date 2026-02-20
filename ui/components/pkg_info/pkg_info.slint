@@ -7,24 +7,21 @@ component CustomButton inherits Rectangle {
     property <color> default_back_color;
     in-out property <string> text;
     in-out property <image> icon;
-    
 
     border-radius: 8px;
     border-width: 0.2px;
 
-    
-    
     background: area.has-hover ? gray.transparentize(0.8) : default_back_color;
-    
+
     Image {
         source: icon;
     }
 
     Text {
         font-size: 14px;
-        text: text; 
+        text: text;
     }
-    
+
     area := TouchArea {
         clicked => {
             clicked()
@@ -32,37 +29,40 @@ component CustomButton inherits Rectangle {
     }
 }
 
-
-
-
-
 export component PkgInfo inherits VerticalBox {
     width: 50%;
     padding: 3px;
     visible: pkg_info_is_visible;
-    
-    
+
     in-out property <bool> pkg_info_is_visible: false;
     in-out property <string> package-base;
     in-out property <string> version;
     in-out property <string> description;
     in-out property <string> maintainer;
     in-out property <string> terminal_output;
+    in-out property <bool> pkg_is_installed;
     in-out property <bool> terminal_is_visible;
-    
+
     callback install_pkg(string);
     callback send_terminal_input(string);
-
+    
+    
     HorizontalLayout {
         spacing: 10px;
-    
+
         Text {
             font-size: 19px;
             height: 28px;
-            text: package-base; 
+            text: package-base;
         }
         
-        CustomButton {
+        if pkg_is_installed == true: CustomButton  {
+            text: "Uninstall";
+            clicked => {
+                
+            }
+        }
+        if pkg_is_installed == false: CustomButton {
             text: "Install";
             clicked => {
                 install_pkg(package-base);
@@ -77,26 +77,25 @@ export component PkgInfo inherits VerticalBox {
                 terminal_is_visible = !terminal_is_visible;
             }
         }
-        
     }
-    
-    
-    Text {        
+
+    Text {
         font-size: 15px;
         height: 28px;
-        text: "Version: " + version; 
+        text: "Version: " + version;
     }
-    
+
     Text {
         font-size: 15px;
         height: 28px;
         text: "Maintainer: " + maintainer;
     }
-    
+
     TextEdit {
         text: description;
         font-size: 15px;
-        enabled: false;
+        read-only: true;
+        height: 20%;
     }
 
     Terminal {

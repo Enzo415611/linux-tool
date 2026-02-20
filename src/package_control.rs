@@ -1,16 +1,18 @@
 use std::{
     io::{self},
-    process::{Command, Output},
+    process::Command,
 };
 
-
-pub fn pkg_is_installed(pkg_name: String) -> Result<Output, io::Error> {
-    let out = Command::new("yay")
-        .args(["-Q", pkg_name.as_str()])
+pub fn pkg_is_installed(pkg_name: &String) -> Result<bool, io::Error> {
+    let out = Command::new("pacman")
+        .args(["-Qq", pkg_name.as_str()])
         .output()?;
-    
-    println!("{}",String::from_utf8_lossy(&out.stdout));
-    Ok(out)
-}
 
-//pub fn uninstall() {}
+    let out_str = String::from_utf8_lossy(&out.stdout).to_string();
+        
+    if pkg_name.trim() == out_str.trim() {
+        Ok(true)
+    } else {
+        Ok(false)
+    }
+}
