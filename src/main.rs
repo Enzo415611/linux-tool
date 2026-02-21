@@ -72,7 +72,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
             is_installed: is_installed,
         });
     });
-
+    
+    
     // terminal
     let ui_handle = ui.as_weak();
     terminal(ui_handle, &logic);

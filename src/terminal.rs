@@ -25,12 +25,25 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
     // button pkg callback install
     let writer_clone = writer_arc.clone();
     let ui_handle = ui.clone();
+    
     logic.on_install_pkg(move |pkg_name| {
         let mut w = writer_clone.lock().unwrap();
         let ui = ui_handle.unwrap();
         let logic = ui.global::<Logic>();
-        logic.set_terminal_output("".to_shared_string());
+        logic.set_terminal_output("Install".to_shared_string());
         _ = writeln!(w, "yay -S {}", pkg_name);
+    });
+    
+    
+    let writer_clone2 = writer_arc.clone();
+    let ui_handle2 = ui.clone();
+    logic.on_uninstall_pkg(move |pkg_name| {
+        println!("Uninstall");
+        let mut w = writer_clone2.lock().unwrap();
+        let ui = ui_handle2.unwrap();
+        let logic = ui.global::<Logic>();
+        logic.set_terminal_output("Uninstall".to_shared_string());
+        _ = writeln!(w, "yay -R {}", pkg_name);
     });
 
     let writer_clone1 = writer_arc.clone();
@@ -78,8 +91,7 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
                     logic.invoke_append_terminal_out(display_text.into());
                 }
             })
-            .unwrap();
-            
+            .unwrap();            
         }
     });
 }

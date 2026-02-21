@@ -1,4 +1,4 @@
-import { VerticalBox, TextEdit, LineEdit } from "std-widgets.slint";
+import { VerticalBox, TextEdit, LineEdit, ScrollView, SpinBox } from "std-widgets.slint";
 
 
 export component Terminal inherits VerticalBox {
@@ -9,9 +9,9 @@ export component Terminal inherits VerticalBox {
 
     TextEdit {
         text: output;
-        read-only: true;
+        read-only: true; 
     }
-
+    
     LineEdit {
         accepted(text) => {
             send_terminal_input(text);

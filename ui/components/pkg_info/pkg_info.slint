@@ -44,6 +44,7 @@ export component PkgInfo inherits VerticalBox {
     in-out property <bool> terminal_is_visible;
 
     callback install_pkg(string);
+    callback uninstall_pkg(string);
     callback send_terminal_input(string);
     
     
@@ -59,12 +60,14 @@ export component PkgInfo inherits VerticalBox {
         if pkg_is_installed == true: CustomButton  {
             text: "Uninstall";
             clicked => {
-                
+                terminal_is_visible = true;
+                uninstall_pkg(package-base);
             }
         }
         if pkg_is_installed == false: CustomButton {
             text: "Install";
             clicked => {
+                terminal_is_visible = true;
                 install_pkg(package-base);
             }
         }

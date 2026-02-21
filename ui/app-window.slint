@@ -25,15 +25,16 @@ export global Logic {
     in-out property <bool> pkg_info_is_visible;
     in-out property <string> terminal_output;
     in-out property <string> terminal_input;
-    in-out property <bool> terminal_is_visible: false;
+    in-out property <bool> terminal_is_visible;
 
     callback send_terminal_input(string);
     callback search_pkg(string);
     callback install_pkg(string);
+    callback uninstall_pkg(string);
     callback pkg_selected_callback(string);
 
     public function append_terminal_out(text: string) {
-        terminal_output = terminal_output + text;
+        terminal_output = text;
     }
 }
 
@@ -85,7 +86,11 @@ export component AppWindow inherits Window {
 
                 install_pkg => {
                     Logic.install_pkg(Logic.pkg_selected.package-base);
-                    Logic.terminal_is_visible = true;
+                }
+                
+                uninstall_pkg => {
+                    Logic.uninstall_pkg(Logic.pkg_selected.package-base);
+                    
                 }
             }
         }
