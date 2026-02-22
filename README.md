@@ -23,8 +23,6 @@ Para compilar e rodar este projeto, certifique-se de ter as seguintes ferramenta
 
 1.  **Rust & Cargo**: [Instalação oficial](https://www.rust-lang.org/tools/install).
 2.  **Yay**: O projeto assume que o `yay` está instalado para gerenciar o AUR.
-3.  **Polkit**: Necessário para que o `pkexec` funcione corretamente e exiba a janela de autenticação ao solicitar privilégios.
-
 ---
 
 ## 🔧 Instalação e Uso
@@ -46,11 +44,17 @@ cargo run --release
 
     Digite o nome do pacote desejado na barra de busca superior.
 
-    A lista será atualizada automaticamente (existe um debounce de 700ms para evitar sobrecarga na API).
+    A lista será atualizada (existe um debounce de 700ms para evitar sobrecarga na API).
 
     Selecione um pacote na lista para visualizar os detalhes (versão, mantenedor, descrição).
 
-    Clique no botão Instalar. Uma janela do sistema pedirá sua senha para iniciar o processo via terminal.
+    Clique no botão Instalar para iniciar o processo via terminal.
+
+
+
+<img width="1920" height="1041" alt="image" src="https://github.com/user-attachments/assets/d53c2a7e-8e49-444d-b986-fa6648553e67" />
+
+<img width="1920" height="1041" alt="image" src="https://github.com/user-attachments/assets/d8af49e1-2ff5-45d5-ba41-6606ee50485b" />
 
 ### ⚖️ Licença
 
