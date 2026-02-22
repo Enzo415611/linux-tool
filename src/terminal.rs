@@ -60,10 +60,11 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
     pair.slave.spawn_command(cmd).unwrap();
     let mut reader = pair.master.try_clone_reader().unwrap();
 
-    thread::spawn(move || {
+    thread::spawn(move || {        
         let mut buffer = [0u8; 1024];
         let mut terminal_buffer = String::new();
-        
+        let mut log = String::new();
+
         
         while let Ok(n) = reader.read(&mut buffer) {
             
@@ -74,16 +75,20 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
             let output = String::from_utf8_lossy(&buffer[..n]).to_string();
             let clear_output = strip_ansi_escapes::strip_str(output);
             terminal_buffer.push_str(&clear_output);
-
-            let ui_handle_clone = ui.clone();
-            let display_text = terminal_buffer.clone();
+            log.push_str(&clear_output);
+            
+            let display_text = terminal_buffer.clone(); 
+            let log = log.clone();
+            
             terminal_buffer.clear();
+            
             // slint update ui
+            let ui_handle3 = ui.clone();
             slint::invoke_from_event_loop(move || {
-                if let Some(ui) = ui_handle_clone.upgrade() {
+                if let Some(ui) = ui_handle3.upgrade() {
                     let logic = ui.global::<Logic>();
                     let input = logic.get_terminal_input().to_string();
-
+                    logic.set_log(log.into());
                     if input == "clear".to_string() {
                         logic.set_terminal_output("".to_shared_string());
                     }    
@@ -93,5 +98,7 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
             })
             .unwrap();            
         }
+        
+        //println!("{}", app_state.log);
     });
 }

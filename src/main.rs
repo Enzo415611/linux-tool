@@ -12,6 +12,9 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+
+use slint::{ComponentHandle};
+
 use crate::{
     aur_api::Package, package_control::pkg_is_installed, search_callback::search_pkg_callback,
     terminal::terminal,
@@ -30,7 +33,7 @@ impl AppState {
         Self {
             last_name,
             last_packages,
-            package_info: package_info,
+            package_info,
         }
     }
 }
@@ -42,6 +45,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         vec![],
         PackageInfo::default(),
     )));
+
     let ui = AppWindow::new()?;
     let logic = ui.global::<Logic>();
 
@@ -72,8 +76,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
             is_installed: is_installed,
         });
     });
-    
-    
+
+    let mut clip = arboard::Clipboard::new()?;
+    logic.on_copy_log(move|log| {
+        _=clip.set_text(log.to_string());
+    });
+
     // terminal
     let ui_handle = ui.as_weak();
     terminal(ui_handle, &logic);

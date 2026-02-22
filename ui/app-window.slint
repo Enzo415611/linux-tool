@@ -26,22 +26,27 @@ export global Logic {
     in-out property <string> terminal_output;
     in-out property <string> terminal_input;
     in-out property <bool> terminal_is_visible;
-
+    in-out property <string> log;
+    
     callback send_terminal_input(string);
     callback search_pkg(string);
     callback install_pkg(string);
     callback uninstall_pkg(string);
     callback pkg_selected_callback(string);
-
+    callback copy_log(string);
+    
     public function append_terminal_out(text: string) {
         terminal_output = text;
     }
+    
+    
+    
 }
 
 export component AppWindow inherits Window {
     title: "linux-tool";
     preferred-width: 800px;
-    preferred-height: 600px;
+    preferred-height: 800px;
 
     VerticalLayout {
         padding: 5px;
@@ -78,6 +83,9 @@ export component AppWindow inherits Window {
                 terminal_output: Logic.terminal_output;
                 pkg_is_installed: Logic.pkg_selected.is-installed;
                 terminal_is_visible: Logic.terminal_is_visible;
+                log: Logic.log;
+                
+                
                 
                 send_terminal_input(text) => {
                     Logic.terminal_input = text;
@@ -87,10 +95,13 @@ export component AppWindow inherits Window {
                 install_pkg => {
                     Logic.install_pkg(Logic.pkg_selected.package-base);
                 }
-                
+
                 uninstall_pkg => {
                     Logic.uninstall_pkg(Logic.pkg_selected.package-base);
-                    
+                }
+                
+                copy_log => {
+                    Logic.copy_log(Logic.log);
                 }
             }
         }

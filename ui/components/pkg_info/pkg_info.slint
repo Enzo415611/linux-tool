@@ -42,7 +42,9 @@ export component PkgInfo inherits VerticalBox {
     in-out property <string> terminal_output;
     in-out property <bool> pkg_is_installed;
     in-out property <bool> terminal_is_visible;
-
+    in-out property <string> log;
+    
+    callback copy_log(string);
     callback install_pkg(string);
     callback uninstall_pkg(string);
     callback send_terminal_input(string);
@@ -104,8 +106,14 @@ export component PkgInfo inherits VerticalBox {
     Terminal {
         output: terminal_output;
         visible: terminal_is_visible;
+        log_ter: log;
+        
         send_terminal_input(text) => {
             send_terminal_input(text);
+        }
+        
+        copy_log => {
+            copy_log(log);
         }
     }
 }
