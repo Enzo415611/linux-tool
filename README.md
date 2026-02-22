@@ -13,46 +13,61 @@ O **linux-tool** é uma interface gráfica (GUI) minimalista projetada para faci
 * **Busca em Tempo Real:** Integração direta com a API RPC do AUR para listagem instantânea de pacotes.
 * **Interface Reativa:** Desenvolvida com Slint, oferecendo uma experiência visual fluida e leve.
 * **Caching Inteligente:** Otimiza o desempenho evitando requisições repetitivas à API para a mesma pesquisa através de um estado de aplicação persistente.
-* **Instalação Segura:** Utiliza `pkexec` (Polkit) para solicitar permissões de administrador (root) apenas no momento exato da instalação.
-
 ---
 
 ## 🛠️ Pré-requisitos
 
 Para compilar e rodar este projeto, certifique-se de ter as seguintes ferramentas instaladas no seu sistema:
 
-1.  **Rust & Cargo**: [Instalação oficial](https://www.rust-lang.org/tools/install).
-2.  **Yay**: O projeto assume que o `yay` está instalado para gerenciar o AUR.
-3.  **Polkit**: Necessário para que o `pkexec` funcione corretamente e exiba a janela de autenticação ao solicitar privilégios.
+1. **Rust & Cargo**: https://www.rust-lang.org/tools/install
+2. **Yay**: O projeto assume que o `yay` está instalado para gerenciar o AUR.
 
 ---
 
 ## 🔧 Instalação e Uso
 
-### 1. Instalação
+### 🔹 Opção 1: Baixar binário já compilado (Recomendado)
 
-Clone o repositório e entre na pasta do projeto:
+Você pode baixar a versão mais recente já compilada diretamente na aba **Releases** do GitHub:
+
+👉 https://github.com/Enzo415611/linux-tool/releases
+
+Após baixar o arquivo:
 
 ```bash
+chmod +x linux-tool
+./linux-tool
+```
+
+🔹 Opção 2: Compilar manualmente
+
+
+Clone o repositório e entre na pasta do projeto:
+```bash
+
 git clone https://github.com/Enzo415611/linux-tool.git
 cd linux-tool
 ```
-Compile e execute o projeto em modo release (otimizado):
-```bash
 
+Compile e execute o projeto em modo release (otimizado):
+
+```bash
 cargo run --release
 ```
-### 2. Como usar
 
-    Digite o nome do pacote desejado na barra de busca superior.
+📦 Como usar
 
-    A lista será atualizada automaticamente (existe um debounce de 700ms para evitar sobrecarga na API).
 
-    Selecione um pacote na lista para visualizar os detalhes (versão, mantenedor, descrição).
+Digite o nome do pacote desejado na barra de busca superior.
 
-    Clique no botão Instalar. Uma janela do sistema pedirá sua senha para iniciar o processo via terminal.
+A lista será atualizada (existe um debounce de 700ms para evitar sobrecarga na API).
 
-### ⚖️ Licença
+Selecione um pacote na lista para visualizar os detalhes (versão, mantenedor, descrição).
+
+Clique no botão Instalar para iniciar o processo via terminal.
+
+<img width="1920" height="1041" alt="image" src="https://github.com/user-attachments/assets/d53c2a7e-8e49-444d-b986-fa6648553e67" /> <img width="1920" height="1041" alt="image" src="https://github.com/user-attachments/assets/d8af49e1-2ff5-45d5-ba41-6606ee50485b" />
+⚖️ Licença
 
 Este projeto está licenciado sob a GNU General Public License v3.0 (GPL-3.0).
 
