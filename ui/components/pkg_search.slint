@@ -1,8 +1,9 @@
 import { HorizontalBox, VerticalBox, LineEdit, Button } from "std-widgets.slint";
+import { CustomButton } from "custom_button.slint";
 
 
 export component PkgSearch inherits HorizontalBox {
-    padding: 5px;
+    padding: 0px;
     height: 35px;
     alignment: LayoutAlignment.center;
 
@@ -13,10 +14,10 @@ export component PkgSearch inherits HorizontalBox {
     
     LineEdit {
         width: 700px;
-        height: 33px;
         font-size: 15px;
         placeholder-text: "Search Packages";
-    
+        input-type: InputType.text;
+        
         accepted(text) => {
             search_pkg(text);
         }
@@ -25,26 +26,11 @@ export component PkgSearch inherits HorizontalBox {
         }
     }
     
-    Rectangle {
-        width: 30px; 
-        height: 33px;
-        border-width: 0.1px;
-        border-radius: 8px;
-        background: area.has-hover ? white.transparentize(0.8) : back;
-        
-        animate background {
-            duration: 250ms;
-        }
-
-        Image {
-            colorize: white;
-            source: @image-url("../assets/search.png");            
-        }
-        
-        area := TouchArea {
-            clicked => {
-                search_pkg(pkg_name);
-            }
+    
+    CustomButton {
+        icon: @image-url("../assets/search.png"); 
+        clicked => {
+            search_pkg(pkg_name);
         }
     }
 }

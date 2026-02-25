@@ -6,9 +6,7 @@ use std::{
 
 use slint::{ComponentHandle, ModelRc, VecModel, Weak};
 
-use crate::{
-    aur_api::search_pkg, AppState, AppWindow, Logic, PackageInfo,
-};
+use crate::{aur_api::search_pkg, AppState, AppWindow, Logic, PackageInfo};
 
 pub fn search_pkg_callback(
     logic: &Logic<'_>,
@@ -22,7 +20,7 @@ pub fn search_pkg_callback(
 
             slint::spawn_local(async_compat::Compat::new(async move {
                 let logic = handle.global::<Logic>();
-                _ = tokio::time::sleep(Duration::from_millis(700)).await;
+                _ = tokio::time::sleep(Duration::from_millis(1000)).await;
 
                 let pkgs = {
                     let mut state = app_state.lock().unwrap();

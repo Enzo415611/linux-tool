@@ -25,7 +25,7 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
     // button pkg callback install
     let writer_clone = writer_arc.clone();
     let ui_handle = ui.clone();
-    
+
     logic.on_install_pkg(move |pkg_name| {
         let mut w = writer_clone.lock().unwrap();
         let ui = ui_handle.unwrap();
@@ -33,8 +33,7 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
         logic.set_terminal_output("Install".to_shared_string());
         _ = writeln!(w, "yay -S {}", pkg_name);
     });
-    
-    
+
     let writer_clone2 = writer_arc.clone();
     let ui_handle2 = ui.clone();
     logic.on_uninstall_pkg(move |pkg_name| {
@@ -60,14 +59,12 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
     pair.slave.spawn_command(cmd).unwrap();
     let mut reader = pair.master.try_clone_reader().unwrap();
 
-    thread::spawn(move || {        
+    thread::spawn(move || {
         let mut buffer = [0u8; 1024];
         let mut terminal_buffer = String::new();
         let mut log = String::new();
 
-        
         while let Ok(n) = reader.read(&mut buffer) {
-            
             if n == 0 {
                 break;
             }
@@ -76,12 +73,12 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
             let clear_output = strip_ansi_escapes::strip_str(output);
             terminal_buffer.push_str(&clear_output);
             log.push_str(&clear_output);
-            
-            let display_text = terminal_buffer.clone(); 
+
+            let display_text = terminal_buffer.clone();
             let log = log.clone();
-            
+
             terminal_buffer.clear();
-            
+
             // slint update ui
             let ui_handle3 = ui.clone();
             slint::invoke_from_event_loop(move || {
@@ -91,14 +88,12 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
                     logic.set_log(log.into());
                     if input == "clear".to_string() {
                         logic.set_terminal_output("".to_shared_string());
-                    }    
-                    
+                    }
+
                     logic.invoke_append_terminal_out(display_text.into());
                 }
             })
-            .unwrap();            
+            .unwrap();
         }
-        
-        //println!("{}", app_state.log);
     });
 }

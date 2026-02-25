@@ -10,7 +10,6 @@ struct AurResponse {
     #[serde(rename = "type")]
     pub response_type: String,
 
-    #[warn(unused)]
     pub version: u8,
 }
 

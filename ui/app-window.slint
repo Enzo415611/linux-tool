@@ -16,7 +16,8 @@ import {
 import { PkgSearch } from "components/pkg_search.slint";
 import { PkgList } from "components/pkg_list.slint";
 import { PkgInfo } from "components//pkg_info/pkg_info.slint";
-
+import { CustomButton } from "components/custom_button.slint";
+import { WindowConfig } from "app-window-config.slint";
 
 export global Logic {
     in-out property <string> pkg_name;
@@ -27,6 +28,8 @@ export global Logic {
     in-out property <string> terminal_input;
     in-out property <bool> terminal_is_visible;
     in-out property <string> log;
+    in-out property <bool> window_home_is_open: true;
+    in-out property <bool> window_config_is_open:true;
     
     callback send_terminal_input(string);
     callback search_pkg(string);
@@ -34,28 +37,46 @@ export global Logic {
     callback uninstall_pkg(string);
     callback pkg_selected_callback(string);
     callback copy_log(string);
-    
+
     public function append_terminal_out(text: string) {
         terminal_output = text;
     }
-    
-    
-    
 }
 
 export component AppWindow inherits Window {
     title: "linux-tool";
     preferred-width: 800px;
     preferred-height: 800px;
-
+    
+    if !Logic.window_home_is_open: WindowConfig {
+        open_window_config: Logic.window_config_is_open ;
+        open_window_home(bool) => {
+            Logic.window_home_is_open = bool;
+        }
+    }
+    
     VerticalLayout {
+        visible: Logic.window_home_is_open;
         padding: 5px;
 
-        PkgSearch {
-            search_pkg(name) => {
-                Logic.pkg_name = name;
-                Logic.search_pkg(name);
-            };
+        HorizontalBox {
+            padding: 0px;
+            height: 40px;
+
+            CustomButton {
+                icon: @image-url("assets/menu-hamburguer.png");
+                
+                clicked => {
+                    Logic.window_home_is_open = false;
+                }
+            }
+
+            PkgSearch {
+                search_pkg(name) => {
+                    Logic.pkg_name = name;
+                    Logic.search_pkg(name);
+                };
+            }
         }
 
         GridBox {
@@ -84,9 +105,7 @@ export component AppWindow inherits Window {
                 pkg_is_installed: Logic.pkg_selected.is-installed;
                 terminal_is_visible: Logic.terminal_is_visible;
                 log: Logic.log;
-                
-                
-                
+
                 send_terminal_input(text) => {
                     Logic.terminal_input = text;
                     Logic.send_terminal_input(text);
@@ -99,7 +118,7 @@ export component AppWindow inherits Window {
                 uninstall_pkg => {
                     Logic.uninstall_pkg(Logic.pkg_selected.package-base);
                 }
-                
+
                 copy_log => {
                     Logic.copy_log(Logic.log);
                 }

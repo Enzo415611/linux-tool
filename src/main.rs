@@ -12,8 +12,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-
-use slint::{ComponentHandle};
+use slint::ComponentHandle;
 
 use crate::{
     aur_api::Package, package_control::pkg_is_installed, search_callback::search_pkg_callback,
@@ -78,8 +77,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     });
 
     let mut clip = arboard::Clipboard::new()?;
-    logic.on_copy_log(move|log| {
-        _=clip.set_text(log.to_string());
+
+    logic.on_copy_log(move |log| {
+        _ = clip.set_text(log.to_string());
     });
 
     // terminal

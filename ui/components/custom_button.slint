@@ -1,0 +1,31 @@
+export component CustomButton inherits Rectangle {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border-width: 0.3px;
+    background: area.has-hover ? gray.transparentize(0.8) : default-back;
+
+    in-out property <string> text;
+    in-out property <image> icon;
+    property <color> default-back;
+    callback clicked();
+    
+    animate background {
+        duration: 250ms ;
+    }
+    
+    Text {
+        text: text;
+    }
+
+    Image {
+        colorize: whitesmoke;
+        source: icon;
+    }
+
+    area := TouchArea {
+        clicked => {
+            clicked()
+        }
+    }
+}

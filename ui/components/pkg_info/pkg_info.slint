@@ -5,6 +5,7 @@ import { Terminal } from "terminal.slint";
 component CustomButton inherits Rectangle {
     callback clicked();
     property <color> default_back_color;
+
     in-out property <string> text;
     in-out property <image> icon;
 
@@ -43,13 +44,12 @@ export component PkgInfo inherits VerticalBox {
     in-out property <bool> pkg_is_installed;
     in-out property <bool> terminal_is_visible;
     in-out property <string> log;
-    
+
     callback copy_log(string);
     callback install_pkg(string);
     callback uninstall_pkg(string);
     callback send_terminal_input(string);
-    
-    
+
     HorizontalLayout {
         spacing: 10px;
 
@@ -58,8 +58,8 @@ export component PkgInfo inherits VerticalBox {
             height: 28px;
             text: package-base;
         }
-        
-        if pkg_is_installed == true: CustomButton  {
+
+        if pkg_is_installed == true: CustomButton {
             text: "Uninstall";
             clicked => {
                 terminal_is_visible = true;
@@ -73,7 +73,7 @@ export component PkgInfo inherits VerticalBox {
                 install_pkg(package-base);
             }
         }
-        
+
         CustomButton {
             icon: @image-url("../../assets/square-terminal.png");
             width: 30px;
@@ -107,11 +107,11 @@ export component PkgInfo inherits VerticalBox {
         output: terminal_output;
         visible: terminal_is_visible;
         log_ter: log;
-        
+
         send_terminal_input(text) => {
             send_terminal_input(text);
         }
-        
+
         copy_log => {
             copy_log(log);
         }
