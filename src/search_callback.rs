@@ -17,11 +17,11 @@ pub fn search_pkg_callback(
         move |pkg_name| {
             let handle = ui_handle.unwrap();
             let app_state = Arc::clone(&app_state_arc);
-
+            
             slint::spawn_local(async_compat::Compat::new(async move {
                 let logic = handle.global::<Logic>();
                 _ = tokio::time::sleep(Duration::from_millis(1000)).await;
-
+                
                 let pkgs = {
                     let mut state = app_state.lock().unwrap();
                     search_pkg(&pkg_name, &mut state).await
@@ -56,6 +56,7 @@ pub fn search_pkg_callback(
                     app_state.lock().unwrap().last_packages = pkgs;
 
                     let the_model = Rc::new(VecModel::from(pkgs_info));
+                    logic.set_loading_pkgs(false);                    
                     logic.set_pkgs_info(ModelRc::from(the_model));
                 }
             }))

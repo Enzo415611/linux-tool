@@ -7,13 +7,15 @@ export component PkgList inherits ListView {
 
     in-out property <[PackageInfo]> pkgs_info;
     
-    
     callback pkg_selected(PackageInfo);
     callback pkg_info_is_visible(bool);
     
+    
     for pkg in pkgs_info: HorizontalLayout {
+    
         padding: 0px;
         in-out property <color> back;
+        
         Rectangle {
             border-width: 0.2px;
             border-radius: 10px;

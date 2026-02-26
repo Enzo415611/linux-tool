@@ -9,7 +9,7 @@ import {
     ScrollView,
     HorizontalBox,
     ListView,
-    Button,
+    Button, Spinner,
 } from "std-widgets.slint";
 
 
@@ -17,7 +17,7 @@ import { PkgSearch } from "components/pkg_search.slint";
 import { PkgList } from "components/pkg_list.slint";
 import { PkgInfo } from "components//pkg_info/pkg_info.slint";
 import { CustomButton } from "components/custom_button.slint";
-import { WindowConfig } from "app-window-config.slint";
+import { WindowConfig } from "window-config.slint";
 
 export global Logic {
     in-out property <string> pkg_name;
@@ -28,8 +28,9 @@ export global Logic {
     in-out property <string> terminal_input;
     in-out property <bool> terminal_is_visible;
     in-out property <string> log;
-    in-out property <bool> window_home_is_open: true;
-    in-out property <bool> window_config_is_open:true;
+    in-out property <bool> window_main_open: true;
+    in-out property <bool> window_config_open: false;
+    in-out property <bool> loading_pkgs;
     
     callback send_terminal_input(string);
     callback search_pkg(string);
@@ -37,7 +38,7 @@ export global Logic {
     callback uninstall_pkg(string);
     callback pkg_selected_callback(string);
     callback copy_log(string);
-
+    
     public function append_terminal_out(text: string) {
         terminal_output = text;
     }
@@ -48,15 +49,17 @@ export component AppWindow inherits Window {
     preferred-width: 800px;
     preferred-height: 800px;
     
-    if !Logic.window_home_is_open: WindowConfig {
-        open_window_config: Logic.window_config_is_open ;
-        open_window_home(bool) => {
-            Logic.window_home_is_open = bool;
-        }
+    
+    if Logic.window_config_open: WindowConfig {
+       visible: Logic.window_config_open;
+       open_main_window(main, config) => {
+            Logic.window_main_open = main;
+            Logic.window_config_open = config;
+       }
     }
     
     VerticalLayout {
-        visible: Logic.window_home_is_open;
+        visible: Logic.window_main_open;
         padding: 5px;
 
         HorizontalBox {
@@ -67,24 +70,38 @@ export component AppWindow inherits Window {
                 icon: @image-url("assets/menu-hamburguer.png");
                 
                 clicked => {
-                    Logic.window_home_is_open = false;
+                    Logic.window_main_open = false;
+                    Logic.window_config_open = true;
                 }
             }
 
             PkgSearch {
                 search_pkg(name) => {
+                    Logic.pkgs_info = [];
                     Logic.pkg_name = name;
+                    Logic.loading_pkgs = true;
                     Logic.search_pkg(name);
                 };
             }
+            
         }
-
+        
+        if Logic.loading_pkgs: HorizontalBox {
+            alignment: LayoutAlignment.center;
+            
+            Spinner {
+                height: 50px;
+                width: 50px;
+                indeterminate: true;
+            }
+        }
+        
         GridBox {
             width: 100%;
             PkgList {
 
                 pkgs_info: Logic.pkgs_info;
-
+                
                 pkg_selected(pkg-selected) => {
                     Logic.pkg_selected = pkg-selected;
                     Logic.pkg_selected_callback(pkg-selected.package-base);
@@ -94,7 +111,7 @@ export component AppWindow inherits Window {
                     Logic.pkg_info_is_visible = is;
                 }
             }
-
+            
             PkgInfo {
                 pkg_info_is_visible: Logic.pkg_info_is_visible;
                 package-base: Logic.pkg_selected.package-base;

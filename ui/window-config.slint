@@ -1,0 +1,32 @@
+import { VerticalBox, HorizontalBox, ComboBox } from "std-widgets.slint";
+import { CustomButton } from "components/custom_button.slint";
+
+
+export component WindowConfig inherits VerticalBox {
+    visible: open_window_config; 
+    padding: 5px;
+    
+    in-out property <bool> open_window_config;
+    callback open_main_window(main: bool, config: bool);
+    
+    HorizontalBox {
+        padding: 0px;
+        CustomButton {
+            icon: @image-url("assets/angulo-esquerdo.png");
+            
+            clicked => {
+                open_main_window(true, false);
+            }
+        }
+    }
+    
+    // ComboBox {   
+    //     width: 40px; 
+    //     model: ["a", "b", "c"];
+    //     current-value: "a";
+    //     accessible-label: "Select Theme";
+    //     selected(current-value) => {
+    //         self.current-value = current-value;
+    //     }
+    // }
+}
