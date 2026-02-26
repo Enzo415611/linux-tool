@@ -66,7 +66,8 @@ Selecione um pacote na lista para visualizar os detalhes (versão, mantenedor, d
 
 Clique no botão Instalar para iniciar o processo via terminal.
 
-<img width="1919" height="1038" alt="image" src="https://github.com/user-attachments/assets/c771b5fa-8207-4f0f-9e51-5c6f89a385fe" /> <img width="1920" height="1040" alt="image" src="https://github.com/user-attachments/assets/1135388e-4ba5-4946-83c0-c6104c61a45a" />
+<img width="1920" height="1036" alt="image" src="https://github.com/user-attachments/assets/9a87a46f-7b75-4dc5-849e-f8ee12ff8420" /> <img width="1920" height="1037" alt="image" src="https://github.com/user-attachments/assets/75cd0acb-5ee7-4a59-b6c3-e29472d6198c" />
+
 
 ⚖️ Licença
 
