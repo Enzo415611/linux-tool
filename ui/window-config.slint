@@ -1,4 +1,4 @@
-import { VerticalBox, HorizontalBox, ComboBox } from "std-widgets.slint";
+import { VerticalBox, HorizontalBox, ComboBox, Switch } from "std-widgets.slint";
 import { CustomButton } from "components/custom_button.slint";
 
 
@@ -7,11 +7,15 @@ export component WindowConfig inherits VerticalBox {
     padding: 5px;
     
     in-out property <bool> open_window_config;
+    in-out property <string> current_theme;
+    
     callback open_main_window(main: bool, config: bool);
+    callback dark_mode(bool);
     
     HorizontalBox {
         padding: 0px;
         CustomButton {
+
             icon: @image-url("assets/angulo-esquerdo.png");
             
             clicked => {
@@ -20,13 +24,13 @@ export component WindowConfig inherits VerticalBox {
         }
     }
     
-    // ComboBox {   
-    //     width: 40px; 
-    //     model: ["a", "b", "c"];
-    //     current-value: "a";
-    //     accessible-label: "Select Theme";
-    //     selected(current-value) => {
-    //         self.current-value = current-value;
-    //     }
-    // }
+    ComboBox {
+        model: ["Dark", "Light"];
+        current-value: current_theme;
+        selected(current-value) => {
+            dark_mode(current-value == "Dark" ? true : false);
+        }
+    }
+    
+    
 }

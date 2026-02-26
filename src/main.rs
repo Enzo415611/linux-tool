@@ -21,9 +21,6 @@ use crate::{
 
 slint::include_modules!();
 
-enum Themes {
-    
-}
 
 pub struct AppState {
     last_name: String,
@@ -43,13 +40,12 @@ impl AppState {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    
     let app_state_arc = Arc::new(Mutex::new(AppState::new(
         "".into(),
         vec![],
         PackageInfo::default(),
     )));
-
+    
     let ui = AppWindow::new()?;
     let logic = ui.global::<Logic>();
 

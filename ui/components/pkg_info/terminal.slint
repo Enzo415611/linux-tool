@@ -24,6 +24,7 @@ export component Terminal inherits VerticalBox {
 
     HorizontalBox {
         LineEdit {
+            font-size: 15px; 
             accepted(text) => {
                 send_terminal_input(text);
             }

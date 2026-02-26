@@ -1,3 +1,4 @@
+import { Theme } from "../Theme.slint";
 export component CustomButton inherits Rectangle {
     width: 30px;
     height: 30px;
@@ -5,8 +6,10 @@ export component CustomButton inherits Rectangle {
     border-width: 0.3px;
     background: area.has-hover ? gray.transparentize(0.8) : default-back;
 
+    in-out property <color> icon_color: Theme.text_color;
     in-out property <string> text;
     in-out property <image> icon;
+    in-out property <length> font-size;
     property <color> default-back;
     callback clicked();
     
@@ -15,11 +18,13 @@ export component CustomButton inherits Rectangle {
     }
     
     Text {
+        font-size: font-size;
+        color: Theme.text_color; 
         text: text;
     }
 
     Image {
-        colorize: whitesmoke;
+        colorize: icon_color;
         source: icon;
     }
 

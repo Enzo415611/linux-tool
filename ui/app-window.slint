@@ -18,6 +18,8 @@ import { PkgList } from "components/pkg_list.slint";
 import { PkgInfo } from "components//pkg_info/pkg_info.slint";
 import { CustomButton } from "components/custom_button.slint";
 import { WindowConfig } from "window-config.slint";
+import { Theme } from "Theme.slint";
+
 
 export global Logic {
     in-out property <string> pkg_name;
@@ -31,6 +33,7 @@ export global Logic {
     in-out property <bool> window_main_open: true;
     in-out property <bool> window_config_open: false;
     in-out property <bool> loading_pkgs;
+    in-out property <string> current_theme: "Select Theme";
     
     callback send_terminal_input(string);
     callback search_pkg(string);
@@ -42,20 +45,26 @@ export global Logic {
     public function append_terminal_out(text: string) {
         terminal_output = text;
     }
+    
 }
 
 export component AppWindow inherits Window {
     title: "linux-tool";
     preferred-width: 800px;
     preferred-height: 800px;
-    
+    background: Theme.background;
     
     if Logic.window_config_open: WindowConfig {
-       visible: Logic.window_config_open;
-       open_main_window(main, config) => {
+        visible: Logic.window_config_open;
+        current_theme: Logic.current_theme;
+        dark_mode(dark_mode) => {
+            Theme.dark_mode = dark-mode;
+        }
+       
+        open_main_window(main, config) => {
             Logic.window_main_open = main;
             Logic.window_config_open = config;
-       }
+        }
     }
     
     VerticalLayout {

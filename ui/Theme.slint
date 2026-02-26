@@ -1,0 +1,6 @@
+export global Theme {
+    in-out property <bool> dark_mode: true;
+    
+    in property <color> background: dark_mode ? #46464d : white;
+    in property <color> text_color: dark_mode ? white : black;
+}

@@ -1,34 +1,7 @@
 import { TextEdit, Button, VerticalBox, LineEdit } from "std-widgets.slint";
 import { Terminal } from "terminal.slint";
-
-
-component CustomButton inherits Rectangle {
-    callback clicked();
-    property <color> default_back_color;
-
-    in-out property <string> text;
-    in-out property <image> icon;
-
-    border-radius: 8px;
-    border-width: 0.2px;
-
-    background: area.has-hover ? gray.transparentize(0.8) : default_back_color;
-
-    Image {
-        source: icon;
-    }
-
-    Text {
-        font-size: 14px;
-        text: text;
-    }
-
-    area := TouchArea {
-        clicked => {
-            clicked()
-        }
-    }
-}
+import { Theme } from "../../Theme.slint";
+import { CustomButton } from "../custom_button.slint";
 
 export component PkgInfo inherits VerticalBox {
     width: 50%;
@@ -54,6 +27,7 @@ export component PkgInfo inherits VerticalBox {
         spacing: 10px;
 
         Text {
+            color: Theme.text_color; 
             font-size: 19px;
             height: 28px;
             text: package-base;
@@ -61,13 +35,18 @@ export component PkgInfo inherits VerticalBox {
 
         if pkg_is_installed == true: CustomButton {
             text: "Uninstall";
+            font-size: 15px;
+            width: 70px;
             clicked => {
                 terminal_is_visible = true;
                 uninstall_pkg(package-base);
             }
         }
+        
         if pkg_is_installed == false: CustomButton {
             text: "Install";
+            font-size: 15px;
+            width: 60px;
             clicked => {
                 terminal_is_visible = true;
                 install_pkg(package-base);
@@ -85,12 +64,14 @@ export component PkgInfo inherits VerticalBox {
     }
 
     Text {
+        color: Theme.text_color;
         font-size: 15px;
         height: 28px;
         text: "Version: " + version;
     }
 
     Text {
+        color: Theme.text_color;
         font-size: 15px;
         height: 28px;
         text: "Maintainer: " + maintainer;
