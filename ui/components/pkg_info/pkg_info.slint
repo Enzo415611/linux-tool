@@ -5,7 +5,8 @@ import { CustomButton } from "../custom_button.slint";
 
 export component PkgInfo inherits VerticalBox {
     width: 50%;
-    padding: 3px;
+    padding: 0px;
+    spacing: 5px;
     visible: pkg_info_is_visible;
 
     in-out property <bool> pkg_info_is_visible: false;
@@ -15,6 +16,7 @@ export component PkgInfo inherits VerticalBox {
     in-out property <string> maintainer;
     in-out property <string> terminal_output;
     in-out property <bool> pkg_is_installed;
+    in-out property <string> repository;
     in-out property <bool> terminal_is_visible;
     in-out property <string> log;
 
@@ -25,7 +27,7 @@ export component PkgInfo inherits VerticalBox {
 
     HorizontalLayout {
         spacing: 10px;
-
+        
         Text {
             color: Theme.text_color; 
             font-size: 19px;
@@ -76,6 +78,13 @@ export component PkgInfo inherits VerticalBox {
         height: 28px;
         text: "Maintainer: " + maintainer;
     }
+    
+    Text {
+        color: Theme.text_color;
+        font-size: 15px;
+        height: 28px;
+        text: "Repository: " + repository;
+    }
 
     TextEdit {
         text: description;
@@ -83,7 +92,7 @@ export component PkgInfo inherits VerticalBox {
         read-only: true;
         height: 20%;
     }
-
+    
     Terminal {
         output: terminal_output;
         visible: terminal_is_visible;

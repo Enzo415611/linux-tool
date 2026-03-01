@@ -33,7 +33,8 @@ export global Logic {
     in-out property <bool> window_main_open: true;
     in-out property <bool> window_config_open: false;
     in-out property <bool> loading_pkgs;
-    in-out property <string> current_theme: "Select Theme";
+    in-out property <bool> aur_is_installed;
+    in-out property <bool> app_theme: Theme.dark_mode;
     
     callback send_terminal_input(string);
     callback search_pkg(string);
@@ -56,7 +57,7 @@ export component AppWindow inherits Window {
     
     if Logic.window_config_open: WindowConfig {
         visible: Logic.window_config_open;
-        current_theme: Logic.current_theme;
+        current_theme: Logic.app_theme;
         dark_mode(dark_mode) => {
             Theme.dark_mode = dark-mode;
         }
@@ -129,6 +130,7 @@ export component AppWindow inherits Window {
                 maintainer: Logic.pkg_selected.maintainer;
                 terminal_output: Logic.terminal_output;
                 pkg_is_installed: Logic.pkg_selected.is-installed;
+                repository: Logic.pkg_selected.repo;
                 terminal_is_visible: Logic.terminal_is_visible;
                 log: Logic.log;
 

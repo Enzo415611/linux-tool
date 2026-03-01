@@ -1,6 +1,11 @@
-use serde::{Deserialize, Serialize};
+use std::{
+    sync::{Arc, Mutex},
+};
 
-use crate::AppState;
+use serde::{Deserialize, Serialize};
+use slint::{ToSharedString};
+
+use crate::{AppState, PackageInfo};
 
 #[derive(Deserialize, Debug, Default)]
 struct AurResponse {
@@ -58,7 +63,20 @@ pub struct Package {
     pub version: String,
 }
 
-pub async fn search_pkg(
+pub fn aur_is_installed() -> bool {
+    if let Ok(alpm) = alpm::Alpm::new("/", "/var/lib/pacman") {
+        let local_db = alpm.localdb();
+
+        match local_db.pkg("yay") {
+            Ok(_) => true,
+            Err(_) => false,
+        }
+    } else {
+        false
+    }
+}
+
+pub async fn search_aur_pkg(
     pkg_name: &str,
     app_state: &mut AppState,
 ) -> Result<Vec<Package>, reqwest::Error> {
@@ -75,5 +93,40 @@ pub async fn search_pkg(
         .await?;
 
         Ok(result.results)
+    }
+}
+
+pub async fn aur_db(app_state: Arc<Mutex<AppState>>, pkg_name: &str) -> Vec<PackageInfo> {
+    let pkgs = {
+        let mut state = app_state.lock().unwrap();
+        search_aur_pkg(&pkg_name, &mut state).await
+    };
+
+    if let Ok(pkgs) = pkgs {
+        let mut pkgs_info: Vec<PackageInfo> = vec![];
+        let mut packages_info: PackageInfo;
+        let default = String::from("NA");
+
+        for pkg in &pkgs {
+            let description = &pkg.description.as_ref().unwrap_or_else(|| &default);
+            let maintainer = &pkg.maintainer.as_ref().unwrap_or_else(|| &default);
+
+            packages_info = PackageInfo {
+                package_base: pkg.package_base.clone().into(),
+                version: pkg.version.clone().into(),
+                description: description.to_shared_string(),
+                maintainer: maintainer.to_shared_string(),
+                is_installed: false,
+                repo: "Aur".to_shared_string(),
+            };
+
+            pkgs_info.push(packages_info);
+        }
+
+        app_state.lock().unwrap().last_packages = pkgs;
+
+        pkgs_info
+    } else {
+        Vec::new()
     }
 }

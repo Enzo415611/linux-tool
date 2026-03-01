@@ -7,30 +7,26 @@ export component WindowConfig inherits VerticalBox {
     padding: 5px;
     
     in-out property <bool> open_window_config;
-    in-out property <string> current_theme;
+    in-out property <bool> current_theme;
     
     callback open_main_window(main: bool, config: bool);
     callback dark_mode(bool);
     
-    HorizontalBox {
-        padding: 0px;
-        CustomButton {
+    CustomButton {
 
-            icon: @image-url("assets/angulo-esquerdo.png");
-            
-            clicked => {
-                open_main_window(true, false);
-            }
+        icon: @image-url("assets/angulo-esquerdo.png");
+        
+        clicked => {
+            open_main_window(true, false);
         }
     }
-    
-    ComboBox {
-        model: ["Dark", "Light"];
-        current-value: current_theme;
-        selected(current-value) => {
-            dark_mode(current-value == "Dark" ? true : false);
+
+    Switch {
+        height: 22px;
+        text: current_theme ? "Dark" : "Light";
+        checked: current_theme ? true : false;
+        toggled => {
+            dark_mode(current_theme ? false : true);
         }
-    }
-    
-    
+    } 
 }

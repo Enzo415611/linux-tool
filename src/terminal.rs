@@ -30,19 +30,26 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
         let mut w = writer_clone.lock().unwrap();
         let ui = ui_handle.unwrap();
         let logic = ui.global::<Logic>();
-        logic.set_terminal_output("Install".to_shared_string());
-        _ = writeln!(w, "yay -S {}", pkg_name);
+        
+        let repo = logic.get_pkg_selected().repo.to_string();
+        
+        if repo == "Aur".to_string() {
+            _ = writeln!(w, "yay -S {}", pkg_name);
+        } else {
+            _ = writeln!(w, "sudo pacman -S {}", pkg_name);
+        }
     });
 
     let writer_clone2 = writer_arc.clone();
     let ui_handle2 = ui.clone();
+    
     logic.on_uninstall_pkg(move |pkg_name| {
-        println!("Uninstall");
         let mut w = writer_clone2.lock().unwrap();
         let ui = ui_handle2.unwrap();
         let logic = ui.global::<Logic>();
+        
         logic.set_terminal_output("Uninstall".to_shared_string());
-        _ = writeln!(w, "yay -R {}", pkg_name);
+        _ = writeln!(w, "sudo pacman -R {}", pkg_name);
     });
 
     let writer_clone1 = writer_arc.clone();
@@ -78,18 +85,11 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
             let log = log.clone();
 
             terminal_buffer.clear();
-
-            // slint update ui
             let ui_handle3 = ui.clone();
             slint::invoke_from_event_loop(move || {
                 if let Some(ui) = ui_handle3.upgrade() {
                     let logic = ui.global::<Logic>();
-                    let input = logic.get_terminal_input().to_string();
                     logic.set_log(log.into());
-                    if input == "clear".to_string() {
-                        logic.set_terminal_output("".to_shared_string());
-                    }
-
                     logic.invoke_append_terminal_out(display_text.into());
                 }
             })
