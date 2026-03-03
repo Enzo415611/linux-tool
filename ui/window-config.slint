@@ -1,6 +1,5 @@
-import { VerticalBox, HorizontalBox, ComboBox, Switch } from "std-widgets.slint";
+import { VerticalBox, HorizontalBox, ComboBox, Switch, AboutSlint, Button, StandardButton } from "std-widgets.slint";
 import { CustomButton } from "components/custom_button.slint";
-
 
 export component WindowConfig inherits VerticalBox {
     visible: open_window_config; 
@@ -28,5 +27,39 @@ export component WindowConfig inherits VerticalBox {
         toggled => {
             dark_mode(current_theme ? false : true);
         }
-    } 
+    }
+    
+    // popup := PopupWindow {
+    //     Rectangle {
+    //         width: 100%;
+    //         height: 100%;
+    //         background: gray;
+    //         border-color: #82807a;
+    //         border-width: 0.8px;
+    //         border-radius: 8px;
+            
+    //         VerticalBox {
+                
+    //         }
+            
+    //     }
+    //     height: 600px;
+    //     width: 600px;
+    //     x: (parent.width - self.width) / 2;
+    //     y:  (parent.height - self.height) / 2;
+        
+    // }
+    
+    // Button {
+    //     text: "About";
+    //     width: 60px;
+    //     height: 50px;
+    //     clicked => {
+    //         popup.show()
+    //     }
+    // }
+    
+    
 }
+
+

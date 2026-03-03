@@ -33,6 +33,7 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
         
         let repo = logic.get_pkg_selected().repo.to_string();
         
+        logic.set_terminal_output("".into());
         if repo == "Aur".to_string() {
             _ = writeln!(w, "yay -S {}", pkg_name);
         } else {
@@ -48,7 +49,7 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
         let ui = ui_handle2.unwrap();
         let logic = ui.global::<Logic>();
         
-        logic.set_terminal_output("Uninstall".to_shared_string());
+        logic.set_terminal_output("".to_shared_string());
         _ = writeln!(w, "sudo pacman -R {}", pkg_name);
     });
 
@@ -68,9 +69,7 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
 
     thread::spawn(move || {
         let mut buffer = [0u8; 1024];
-        let mut terminal_buffer = String::new();
-        let mut log = String::new();
-
+        
         while let Ok(n) = reader.read(&mut buffer) {
             if n == 0 {
                 break;
@@ -78,18 +77,13 @@ pub fn terminal(ui: Weak<AppWindow>, logic: &Logic<'_>) {
 
             let output = String::from_utf8_lossy(&buffer[..n]).to_string();
             let clear_output = strip_ansi_escapes::strip_str(output);
-            terminal_buffer.push_str(&clear_output);
-            log.push_str(&clear_output);
 
-            let display_text = terminal_buffer.clone();
-            let log = log.clone();
+            let display_text = clear_output;
 
-            terminal_buffer.clear();
             let ui_handle3 = ui.clone();
             slint::invoke_from_event_loop(move || {
                 if let Some(ui) = ui_handle3.upgrade() {
                     let logic = ui.global::<Logic>();
-                    logic.set_log(log.into());
                     logic.invoke_append_terminal_out(display_text.into());
                 }
             })

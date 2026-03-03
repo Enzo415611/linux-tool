@@ -4,13 +4,13 @@ import { CustomButton } from "custom_button.slint";
 
 export component PkgList inherits ListView {
     height: 100%;
-    width: 28%;
+    width: 100%;
+    
 
     in-out property <[PackageInfo]> pkgs_info;
     
     callback pkg_selected(PackageInfo);
     callback pkg_info_is_visible(bool);
-    
     
     for pkg in pkgs_info: HorizontalLayout {
     

@@ -9,7 +9,7 @@ import {
     ScrollView,
     HorizontalBox,
     ListView,
-    Button, Spinner,
+    Button, Spinner, StandardButton,
 } from "std-widgets.slint";
 
 
@@ -44,7 +44,7 @@ export global Logic {
     callback copy_log(string);
     
     public function append_terminal_out(text: string) {
-        terminal_output = text;
+        terminal_output = terminal_output + text;
     }
     
 }
@@ -54,7 +54,7 @@ export component AppWindow inherits Window {
     preferred-width: 800px;
     preferred-height: 800px;
     background: Theme.background;
-    
+
     if Logic.window_config_open: WindowConfig {
         visible: Logic.window_config_open;
         current_theme: Logic.app_theme;
@@ -108,19 +108,26 @@ export component AppWindow inherits Window {
         
         GridBox {
             width: 100%;
-            PkgList {
-
-                pkgs_info: Logic.pkgs_info;
+            Rectangle {
+                border-color: black;
+                border-width: 0.8px;
+                border-radius: 8px;
                 
-                pkg_selected(pkg-selected) => {
-                    Logic.pkg_selected = pkg-selected;
-                    Logic.pkg_selected_callback(pkg-selected.package-base);
-                }
-
-                pkg_info_is_visible(is) => {
-                    Logic.pkg_info_is_visible = is;
+                PkgList {
+    
+                    pkgs_info: Logic.pkgs_info;
+                    
+                    pkg_selected(pkg-selected) => {
+                        Logic.pkg_selected = pkg-selected;
+                        Logic.pkg_selected_callback(pkg-selected.package-base);
+                    }
+    
+                    pkg_info_is_visible(is) => {
+                        Logic.pkg_info_is_visible = is;
+                    }
                 }
             }
+            
             
             PkgInfo {
                 pkg_info_is_visible: Logic.pkg_info_is_visible;
@@ -132,7 +139,6 @@ export component AppWindow inherits Window {
                 pkg_is_installed: Logic.pkg_selected.is-installed;
                 repository: Logic.pkg_selected.repo;
                 terminal_is_visible: Logic.terminal_is_visible;
-                log: Logic.log;
 
                 send_terminal_input(text) => {
                     Logic.terminal_input = text;
@@ -145,10 +151,6 @@ export component AppWindow inherits Window {
 
                 uninstall_pkg => {
                     Logic.uninstall_pkg(Logic.pkg_selected.package-base);
-                }
-
-                copy_log => {
-                    Logic.copy_log(Logic.log);
                 }
             }
         }

@@ -13,14 +13,15 @@ export component Terminal inherits VerticalBox {
     height: 400px;
     padding: 0px;
     in-out property <string> output;
-    in-out property <string> log_ter;
-    callback copy_log(string);
     callback send_terminal_input(string);
 
     TextEdit {
         text: output;
         font-size: 15px;
         read-only: true;
+        changed text => {
+            self.viewport-y = -99999.0px;
+        }
     }
 
     HorizontalBox {
@@ -28,13 +29,6 @@ export component Terminal inherits VerticalBox {
             font-size: 15px; 
             accepted(text) => {
                 send_terminal_input(text);
-            }
-        }
-
-        Button {
-            text: "Copy Log";
-            clicked => {
-                copy_log(log_ter);
             }
         }
     }
