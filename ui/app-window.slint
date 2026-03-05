@@ -29,9 +29,11 @@ export component AppWindow inherits Window {
     preferred-width: 800px;
     preferred-height: 800px;
     background: Theme.background;
+    
     if Logic.window_config_open: SettingsPage {
         visible: Logic.window_config_open;
         current_theme: Theme.dark_mode;
+        app_version: Logic.app_version;
         open_git => {
             Logic.open_git();
         }

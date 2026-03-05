@@ -10,8 +10,10 @@ export component AboutPopup inherits PopupWindow {
     close-policy: PopupClosePolicy.close-on-click;
     preferred-width: 500px;
     preferred-height: 500px;
+    
+    in-out property <string> app_version;
     callback open_git();
-
+    
     Rectangle {
         height: 100%;
         width: 100%;
@@ -22,14 +24,16 @@ export component AboutPopup inherits PopupWindow {
             alignment: LayoutAlignment.start;
             padding: 4px;
 
-            HorizontalLayout {
-                padding: 5px;
-                spacing: 2px;
-                Button {
-                    text: "created by zzz";
-                    colorize-icon: true;
-                    icon: @image-url("../assets/github.png");
-                }
+            Button {
+                text: "created by zzz";
+                colorize-icon: true;
+                icon: @image-url("../assets/github.png");
+            }
+
+            Text {
+                color: black; 
+                font-size: 17px;
+                text: "app version: "+ app_version;
             }
         }
     }

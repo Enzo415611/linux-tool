@@ -48,6 +48,8 @@ impl AppState {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    const VERSION: &str = env!("CARGO_PKG_VERSION");
+    
     let app_state_arc = Arc::new(Mutex::new(AppState::new(
         "".into(),
         vec![],
@@ -61,13 +63,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let ui = AppWindow::new()?;
     let logic = ui.global::<Logic>();
     let theme = ui.global::<Theme>();
-
+    
+    logic.set_app_version(VERSION.into());
     theme.set_dark_mode(cfg.app_theme);
+    // salva o tema em /.config/linux-tool/config.toml
     theme.on_dark_mode_callback(move |current_theme|{
         _=confy::store("linux-tool", "config", AppConfig {
             app_theme: current_theme
         });
-
     });
 
     let aur_is_installed = {
