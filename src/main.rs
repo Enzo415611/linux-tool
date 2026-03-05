@@ -6,6 +6,7 @@ mod package_control;
 mod pacman;
 mod search_callback;
 mod terminal;
+mod config;
 
 use std::{
     env,
@@ -16,11 +17,11 @@ use std::{
 use slint::ComponentHandle;
 
 use crate::{
-    aur_api::{Package, aur_is_installed}, package_control::pkg_is_installed, search_callback::search_pkg_callback,
-    terminal::terminal,
+    aur_api::{Package, aur_is_installed}, config::{AppConfig, load_config}, package_control::pkg_is_installed, search_callback::search_pkg_callback, terminal::terminal
 };
 
 slint::include_modules!();
+
 
 pub struct AppState {
     last_name: String,
@@ -54,15 +55,27 @@ async fn main() -> Result<(), Box<dyn Error>> {
         aur_is_installed()
     )));
 
+
+    let cfg = load_config()?;
+    println!("config: {:?}", cfg);
     let ui = AppWindow::new()?;
     let logic = ui.global::<Logic>();
-    
+    let theme = ui.global::<Theme>();
+
+    theme.set_dark_mode(cfg.app_theme);
+    theme.on_dark_mode_callback(move |current_theme|{
+        _=confy::store("linux-tool", "config", AppConfig {
+            app_theme: current_theme
+        });
+
+    });
+
     let aur_is_installed = {
         app_state_arc.lock().unwrap().aur_is_installed
     };
-    
+
     logic.set_aur_is_installed(aur_is_installed);
-    
+
     let ui_handle = ui.as_weak();
     let app_state_clone = Arc::clone(&app_state_arc);
     search_pkg_callback(&logic, ui_handle, app_state_clone);
@@ -75,7 +88,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         let logic = ui.global::<Logic>();
 
         let mut app_state = app_state_clone2.lock().unwrap();
-        
+
         app_state.package_info = PackageInfo {
             description: logic.get_pkg_selected().description,
             package_base: logic.get_pkg_selected().package_base,
@@ -84,8 +97,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
             repo: logic.get_pkg_selected().repo,
             is_installed: logic.get_pkg_selected().is_installed,
         };
-        
-        
+
+
         logic.set_pkg_selected(PackageInfo {
             description: logic.get_pkg_selected().description,
             package_base: logic.get_pkg_selected().package_base,
@@ -96,18 +109,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
         });
     });
 
-    let mut clip = arboard::Clipboard::new()?;
-    logic.on_copy_log(move |log| {
-        _ = clip.set_text(log.to_string());
-    });
-
     // terminal
     let ui_handle3 = ui.as_weak();
     terminal(ui_handle3, &logic);
 
     let app_state_clone3 = Arc::clone(&app_state_arc);
     let ui_handle4 = ui.as_weak();
-    thread::spawn(move|| {        
+    thread::spawn(move|| {
         loop {
              let is_installed = {
                  let app_state = app_state_clone3.lock().unwrap();
@@ -116,10 +124,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
                  is_installed
              };
 
-            
+
             let ui_handle = ui_handle4.clone();
-            thread::sleep(Duration::from_millis(300)); 
-        
+            thread::sleep(Duration::from_millis(300));
+
             slint::invoke_from_event_loop(move || {
                 if let Some(ui) = ui_handle.upgrade() {
                     let logic = ui.global::<Logic>();
@@ -135,10 +143,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 }
             }).unwrap();
         }
-        
-    });
-    
-    ui.run()?;
 
+    });
+
+
+    logic.on_open_git(|| {
+        _=open::that("https://github.com/Enzo415611/Enzo415611").unwrap();
+    });
+
+    ui.run()?;
     Ok(())
 }

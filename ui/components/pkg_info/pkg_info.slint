@@ -1,6 +1,6 @@
 import { TextEdit, Button, VerticalBox, LineEdit } from "std-widgets.slint";
 import { Terminal } from "terminal.slint";
-import { Theme } from "../../Theme.slint";
+import { Theme, PackageInfo } from "../../logic.slint";
 import { CustomButton } from "../custom_button.slint";
 
 export component PkgInfo inherits VerticalBox {
@@ -22,7 +22,7 @@ export component PkgInfo inherits VerticalBox {
     callback install_pkg(string);
     callback uninstall_pkg(string);
     callback send_terminal_input(string);
-
+    
     HorizontalLayout {
         spacing: 10px;
         

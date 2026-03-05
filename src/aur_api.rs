@@ -1,9 +1,7 @@
-use std::{
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 use serde::{Deserialize, Serialize};
-use slint::{ToSharedString};
+use slint::ToSharedString;
 
 use crate::{AppState, PackageInfo};
 

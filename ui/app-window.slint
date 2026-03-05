@@ -9,65 +9,38 @@ import {
     ScrollView,
     HorizontalBox,
     ListView,
-    Button, Spinner, StandardButton,
+    Button,
+    Spinner,
+    StandardButton,
 } from "std-widgets.slint";
 
 
 import { PkgSearch } from "components/pkg_search.slint";
 import { PkgList } from "components/pkg_list.slint";
 import { PkgInfo } from "components//pkg_info/pkg_info.slint";
+import { AboutPopup } from "components/about-popup.slint";
 import { CustomButton } from "components/custom_button.slint";
-import { WindowConfig } from "window-config.slint";
-import { Theme } from "Theme.slint";
-
-
-export global Logic {
-    in-out property <string> pkg_name;
-    in-out property <[PackageInfo]> pkgs_info;
-    in-out property <PackageInfo> pkg_selected;
-    in-out property <bool> pkg_info_is_visible;
-    in-out property <string> terminal_output;
-    in-out property <string> terminal_input;
-    in-out property <bool> terminal_is_visible;
-    in-out property <string> log;
-    in-out property <bool> window_main_open: true;
-    in-out property <bool> window_config_open: false;
-    in-out property <bool> loading_pkgs;
-    in-out property <bool> aur_is_installed;
-    in-out property <bool> app_theme: Theme.dark_mode;
-    
-    callback send_terminal_input(string);
-    callback search_pkg(string);
-    callback install_pkg(string);
-    callback uninstall_pkg(string);
-    callback pkg_selected_callback(string);
-    callback copy_log(string);
-    
-    public function append_terminal_out(text: string) {
-        terminal_output = terminal_output + text;
-    }
-    
-}
+import { SettingsPage } from "settings-page.slint";
+import { Theme, Logic } from "logic.slint";
+export { Theme, Logic }
 
 export component AppWindow inherits Window {
     title: "linux-tool";
     preferred-width: 800px;
     preferred-height: 800px;
     background: Theme.background;
-
-    if Logic.window_config_open: WindowConfig {
+    if Logic.window_config_open: SettingsPage {
         visible: Logic.window_config_open;
-        current_theme: Logic.app_theme;
-        dark_mode(dark_mode) => {
-            Theme.dark_mode = dark-mode;
+        current_theme: Theme.dark_mode;
+        open_git => {
+            Logic.open_git();
         }
-       
         open_main_window(main, config) => {
             Logic.window_main_open = main;
             Logic.window_config_open = config;
         }
     }
-    
+
     VerticalLayout {
         visible: Logic.window_main_open;
         padding: 5px;
@@ -75,10 +48,9 @@ export component AppWindow inherits Window {
         HorizontalBox {
             padding: 0px;
             height: 40px;
-
             CustomButton {
                 icon: @image-url("assets/menu-hamburguer.png");
-                
+
                 clicked => {
                     Logic.window_main_open = false;
                     Logic.window_config_open = true;
@@ -93,64 +65,64 @@ export component AppWindow inherits Window {
                     Logic.search_pkg(name);
                 };
             }
-            
         }
-        
+
         if Logic.loading_pkgs: HorizontalBox {
             alignment: LayoutAlignment.center;
-            
+
             Spinner {
                 height: 50px;
                 width: 50px;
                 indeterminate: true;
             }
         }
-        
-        GridBox {
-            width: 100%;
-            Rectangle {
-                border-color: black;
-                border-width: 0.8px;
-                border-radius: 8px;
-                
-                PkgList {
-    
-                    pkgs_info: Logic.pkgs_info;
-                    
-                    pkg_selected(pkg-selected) => {
-                        Logic.pkg_selected = pkg-selected;
-                        Logic.pkg_selected_callback(pkg-selected.package-base);
+
+        Rectangle {
+            if Logic.pkgs_info.length >= 1: GridBox {
+                width: 100%;
+
+                Rectangle {
+                    border-color: black;
+                    border-width: 0.8px;
+                    border-radius: 8px;
+
+                    PkgList {
+                        pkgs_info: Logic.pkgs_info;
+
+                        pkg_selected(pkg-selected) => {
+                            Logic.pkg_selected = pkg-selected;
+                            Logic.pkg_selected_callback(pkg-selected.package-base);
+                        }
+
+                        pkg_info_is_visible(is) => {
+                            Logic.pkg_info_is_visible = is;
+                        }
                     }
-    
-                    pkg_info_is_visible(is) => {
-                        Logic.pkg_info_is_visible = is;
+                }
+
+                PkgInfo {
+                    pkg_info_is_visible: Logic.pkg_info_is_visible;
+                    package-base: Logic.pkg_selected.package-base;
+                    version: Logic.pkg_selected.version;
+                    description: Logic.pkg_selected.description;
+                    maintainer: Logic.pkg_selected.maintainer;
+                    terminal_output: Logic.terminal_output;
+                    pkg_is_installed: Logic.pkg_selected.is-installed;
+                    repository: Logic.pkg_selected.repo;
+                    terminal_is_visible: Logic.terminal_is_visible;
+
+                    send_terminal_input(text) => {
+                        Logic.terminal_input = text;
+                        Logic.send_terminal_input(text);
                     }
-                }
-            }
-            
-            
-            PkgInfo {
-                pkg_info_is_visible: Logic.pkg_info_is_visible;
-                package-base: Logic.pkg_selected.package-base;
-                version: Logic.pkg_selected.version;
-                description: Logic.pkg_selected.description;
-                maintainer: Logic.pkg_selected.maintainer;
-                terminal_output: Logic.terminal_output;
-                pkg_is_installed: Logic.pkg_selected.is-installed;
-                repository: Logic.pkg_selected.repo;
-                terminal_is_visible: Logic.terminal_is_visible;
 
-                send_terminal_input(text) => {
-                    Logic.terminal_input = text;
-                    Logic.send_terminal_input(text);
-                }
+                    install_pkg => {
+                        Logic.install_pkg(Logic.pkg_selected.package-base);
+                    }
 
-                install_pkg => {
-                    Logic.install_pkg(Logic.pkg_selected.package-base);
-                }
-
-                uninstall_pkg => {
-                    Logic.uninstall_pkg(Logic.pkg_selected.package-base);
+                    uninstall_pkg => {
+                        Logic.uninstall_pkg(Logic.pkg_selected.package-base);
+                    }
                 }
             }
         }

@@ -1,0 +1,36 @@
+import {
+    StandardButton,
+    Button,
+    HorizontalBox,
+    VerticalBox,
+} from "std-widgets.slint";
+import { CustomButton } from "custom_button.slint";
+
+export component AboutPopup inherits PopupWindow {
+    close-policy: PopupClosePolicy.close-on-click;
+    preferred-width: 500px;
+    preferred-height: 500px;
+    callback open_git();
+
+    Rectangle {
+        height: 100%;
+        width: 100%;
+        border-radius: 10px;
+        background: #bab9b6;
+
+        VerticalLayout {
+            alignment: LayoutAlignment.start;
+            padding: 4px;
+
+            HorizontalLayout {
+                padding: 5px;
+                spacing: 2px;
+                Button {
+                    text: "created by zzz";
+                    colorize-icon: true;
+                    icon: @image-url("../assets/github.png");
+                }
+            }
+        }
+    }
+}
