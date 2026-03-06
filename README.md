@@ -17,8 +17,6 @@ O **linux-tool** é uma GUI minimalista e leve para gerenciar pacotes no **Arch 
 Suporta **pacotes oficiais** (via `pacman`) **e** **AUR** (via `yay`).  
 Feito com **Slint** para uma interface declarativa nativa, performática e sem dependências pesadas.
 
-disponível diretamente no AUR como **linux-tool-bin** para instalação em um comando só! 🚀
-
 ---
 
 ### ✨ Funcionalidades
@@ -41,19 +39,7 @@ disponível diretamente no AUR como **linux-tool-bin** para instalação em um c
 
 ### 🚀 Instalação e Uso
 
-#### Opção 1: Via AUR (mais fácil para usuários Arch – Recomendado!)
-
-Use seu helper favorito (yay, paru, etc.):
-
-```bash
-yay -S linux-tool-bin
-# ou
-paru -S linux-tool-bin
-```
-Após instalar, rode:
-```linux-tool```
-
-Opção 2: Baixar binário pré-compilado manualmente
+Opção 1: Baixar binário pré-compilado manualmente
 
 Acesse Releases:
 👉 https://github.com/Enzo415611/linux-tool/releases
@@ -61,7 +47,7 @@ Baixe linux-tool (ou o .tar.gz equivalente).
 Torne executável e execute: ```chmod +x linux-tool
 ./linux-tool```
 
-Opção 3: Compilar do fonte
+Opção 2: Compilar do fonte
 ```Bash
 git clone https://github.com/Enzo415611/linux-tool.git
 cd linux-tool
