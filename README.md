@@ -1,76 +1,82 @@
-# 🛠️ Linux Tool
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:000000,100:1e1e1e&height=120&section=header&text=Linux%20Tool%20🛠️&fontSize=40&fontColor=ffffff" alt="Banner Linux Tool" />
+</p>
 
-![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
-![Slint](https://img.shields.io/badge/Slint-23B14D?style=for-the-badge&logo=qt&logoColor=white)
-![License](https://img.shields.io/badge/license-GPLv3-blue?style=for-the-badge)
+<h1 align="center">🛠️ Linux Tool</h1>
 
-O **linux-tool** é uma interface gráfica (GUI) minimalista projetada para facilitar a interação com o AUR (Arch User Repository). Ele utiliza o **Slint** para a interface do usuário e o **yay** como backend para gerenciamento de pacotes, permitindo pesquisar e instalar softwares de forma rápida e segura.
+<div align="center">
 
----
+![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
+![Slint](https://img.shields.io/badge/Slint-2379F4?style=for-the-badge&logo=slint&logoColor=white)
+![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/Enzo415611/linux-tool?style=for-the-badge)
 
-## 🚀 Funcionalidades
+</div>
 
-* **Busca em Tempo Real:** Integração direta com a API RPC do AUR para listagem instantânea de pacotes.
-* **Interface Reativa:** Desenvolvida com Slint, oferecendo uma experiência visual fluida e leve.
-* **Caching Inteligente:** Otimiza o desempenho evitando requisições repetitivas à API para a mesma pesquisa através de um estado de aplicação persistente.
----
-
-## 🛠️ Pré-requisitos
-
-Para compilar e rodar este projeto, certifique-se de ter as seguintes ferramentas instaladas no seu sistema:
-
-1. **Rust & Cargo**: https://www.rust-lang.org/tools/install
-2. **Yay**: O projeto assume que o `yay` está instalado para gerenciar o AUR.
+O **linux-tool** é uma GUI minimalista e leve para gerenciar pacotes no **Arch Linux** e derivados.  
+Suporta **pacotes oficiais** (via `pacman`) **e** **AUR** (via `yay`).  
+Feito com **Slint** para uma interface declarativa nativa, performática e sem dependências pesadas.
 
 ---
 
-## 🔧 Instalação e Uso
+### ✨ Funcionalidades
 
-### 🔹 Opção 1: Baixar binário já compilado (Recomendado)
+- 🔍 **Busca em tempo real** — Para pacotes oficiais (pacman) e AUR (API RPC)
+- 🎨 **Interface reativa e fluida** — 100% com Slint
+- 🧠 **Caching inteligente** — Evita requisições repetidas à API do AUR
+- 💾 **Configurações persistentes** — Salvas em `~/.config/linux-tool`
 
-Você pode baixar a versão mais recente já compilada diretamente na aba **Releases** do GitHub:
+---
 
+### 🛠️ Pré-requisitos
+
+- **Rust** + **Cargo** (para compilar do fonte, opcional)
+- **yay** — Para pacotes AUR (recomendado)
+- **pacman** — Já incluso no Arch
+- Sistema baseado em Arch Linux ou derivado
+
+---
+
+### 🚀 Instalação e Uso
+
+Opção 1: Baixar binário pré-compilado manualmente
+
+Acesse Releases:
 👉 https://github.com/Enzo415611/linux-tool/releases
+Baixe linux-tool (ou o .tar.gz equivalente).
+Torne executável e execute: ```chmod +x linux-tool
+./linux-tool```
 
-Após baixar o arquivo:
-
-```bash
-chmod +x linux-tool
-./linux-tool
-```
-
-🔹 Opção 2: Compilar manualmente
-
-
-Clone o repositório e entre na pasta do projeto:
-```bash
-
+Opção 2: Compilar do fonte
+```Bash
 git clone https://github.com/Enzo415611/linux-tool.git
 cd linux-tool
-```
-
-Compile e execute o projeto em modo release (otimizado):
-
-```bash
 cargo run --release
 ```
+Ou build otimizado:
+```bash
+cargo build --release
+# Binário em: target/release/linux-tool
+```
+Como usar:
 
-📦 Como usar
+Digite o nome do pacote na barra de busca (ex: "firefox", "neofetch", "visual-studio-code-bin").
+A lista atualiza automaticamente (debounce de 700ms para AUR).
+Pacotes oficiais: origem "pacman" / repositórios oficiais.
+Pacotes AUR: origem "AUR".
+Selecione → veja detalhes (versão, mantenedor, descrição).
+Clique em Instalar → terminal abre com o comando correto (pacman -S ou yay -S).
 
 
-Digite o nome do pacote desejado na barra de busca superior.
+  <img width="800" alt="Tela principal de busca" src="https://github.com/user-attachments/assets/9a87a46f-7b75-4dc5-849e-f8ee12ff8420">
+  <img width="800" alt="Detalhes do pacote e instalação" src="https://github.com/user-attachments/assets/75cd0acb-5ee7-4a59-b6c3-e29472d6198c">
+  
 
-A lista será atualizada (existe um debounce de 700ms para evitar sobrecarga na API).
 
-Selecione um pacote na lista para visualizar os detalhes (versão, mantenedor, descrição).
-
-Clique no botão Instalar para iniciar o processo via terminal.
-
-<img width="1920" height="1036" alt="image" src="https://github.com/user-attachments/assets/9a87a46f-7b75-4dc5-849e-f8ee12ff8420" /> <img width="1920" height="1037" alt="image" src="https://github.com/user-attachments/assets/75cd0acb-5ee7-4a59-b6c3-e29472d6198c" />
+  Interface em ação: busca e detalhes de pacotes
 
 
 ⚖️ Licença
-
-Este projeto está licenciado sob a GNU General Public License v3.0 (GPL-3.0).
-
-Isso garante que o software permaneça livre para todos os usuários, permitindo cópia, modificação e distribuição, desde que as alterações também sejam licenciadas sob a GPL e o código-fonte permaneça aberto. Consulte o arquivo LICENSE para mais detalhes.
+GNU General Public License v3.0 (GPL-3.0)
+Código livre para uso, modificação e distribuição — mantendo a mesma licença e fonte aberto.
+Veja LICENSE para detalhes.
