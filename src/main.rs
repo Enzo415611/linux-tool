@@ -17,15 +17,17 @@ use std::{
 use slint::ComponentHandle;
 
 use crate::{
-    aur_api::{Package, aur_is_installed}, config::{AppConfig, load_config}, package_control::pkg_is_installed, search_callback::search_pkg_callback, terminal::terminal
+    aur_api::{AurPackage, yay_is_installed}, config::{AppConfig, load_config}, package_control::pkg_is_installed, search_callback::search_pkg_callback, terminal::terminal
 };
+
+use self::pacman::PacmanPackage;
 
 slint::include_modules!();
 
-
 pub struct AppState {
     last_name: String,
-    last_packages: Vec<Package>,
+    last_aur_packages: Vec<AurPackage>,
+    last_pacman_packages: Vec<PacmanPackage>,
     package_info: PackageInfo,
     aur_is_installed: bool
 }
@@ -33,13 +35,15 @@ pub struct AppState {
 impl AppState {
     fn new(
         last_name: String,
-        last_packages: Vec<Package>,
+        last_aur_packages: Vec<AurPackage>,
+        last_pacman_packages: Vec<PacmanPackage>,
         package_info: PackageInfo,
         aur_is_installed: bool
     ) -> Self {
         Self {
             last_name,
-            last_packages,
+            last_aur_packages,
+            last_pacman_packages,
             package_info,
             aur_is_installed
         }
@@ -53,8 +57,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let app_state_arc = Arc::new(Mutex::new(AppState::new(
         "".into(),
         vec![],
+        vec![],
         PackageInfo::default(),
-        aur_is_installed()
+        yay_is_installed()
     )));
 
 

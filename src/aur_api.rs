@@ -8,7 +8,7 @@ use crate::{AppState, PackageInfo};
 #[derive(Deserialize, Debug, Default)]
 struct AurResponse {
     pub resultcount: u32,
-    pub results: Vec<Package>,
+    pub results: Vec<AurPackage>,
 
     #[serde(rename = "type")]
     pub response_type: String,
@@ -17,7 +17,7 @@ struct AurResponse {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Package {
+pub struct AurPackage {
     #[serde(rename = "Description")]
     pub description: Option<String>,
 
@@ -61,7 +61,7 @@ pub struct Package {
     pub version: String,
 }
 
-pub fn aur_is_installed() -> bool {
+pub fn yay_is_installed() -> bool {
     if let Ok(alpm) = alpm::Alpm::new("/", "/var/lib/pacman") {
         let local_db = alpm.localdb();
 
@@ -77,9 +77,9 @@ pub fn aur_is_installed() -> bool {
 pub async fn search_aur_pkg(
     pkg_name: &str,
     app_state: &mut AppState,
-) -> Result<Vec<Package>, reqwest::Error> {
+) -> Result<Vec<AurPackage>, reqwest::Error> {
     if app_state.last_name == pkg_name {
-        Ok(app_state.last_packages.clone())
+        Ok(app_state.last_aur_packages.clone())
     } else {
         app_state.last_name = pkg_name.into();
         let result: AurResponse = reqwest::get(format!(
@@ -121,7 +121,7 @@ pub async fn aur_db(app_state: Arc<Mutex<AppState>>, pkg_name: &str) -> Vec<Pack
             pkgs_info.push(packages_info);
         }
 
-        app_state.lock().unwrap().last_packages = pkgs;
+        app_state.lock().unwrap().last_aur_packages = pkgs;
 
         pkgs_info
     } else {

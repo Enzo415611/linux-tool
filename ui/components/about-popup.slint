@@ -5,15 +5,13 @@ import {
     VerticalBox,
 } from "std-widgets.slint";
 import { CustomButton } from "custom_button.slint";
+import { Logic } from "../logic.slint";
 
 export component AboutPopup inherits PopupWindow {
     close-policy: PopupClosePolicy.close-on-click;
     preferred-width: 500px;
     preferred-height: 500px;
-    
-    in-out property <string> app_version;
-    callback open_git();
-    
+
     Rectangle {
         height: 100%;
         width: 100%;
@@ -28,12 +26,15 @@ export component AboutPopup inherits PopupWindow {
                 text: "created by zzz";
                 colorize-icon: true;
                 icon: @image-url("../assets/github.png");
+                clicked => {
+                    Logic.open_git()
+                }
             }
 
             Text {
-                color: black; 
+                color: black;
                 font-size: 17px;
-                text: "app version: "+ app_version;
+                text: "app version: " + Logic.app_version;
             }
         }
     }

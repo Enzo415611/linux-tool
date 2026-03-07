@@ -8,46 +8,34 @@ import {
     StandardButton,
 } from "std-widgets.slint";
 import { CustomButton } from "components/custom_button.slint";
-import { Theme } from "logic.slint";
+import { Theme, Logic } from "logic.slint";
 import { AboutPopup } from "components/about-popup.slint";
 
 export component SettingsPage inherits VerticalBox {
-    visible: open_window_config;
+    visible: Logic.window_config_open;
     padding: 5px;
-
-    in-out property <bool> open_window_config;
-    in-out property <bool> current_theme;
-    in-out property <string> app_version;
-
-    callback open_main_window(main: bool, config: bool);
-    callback open_git();
 
     CustomButton {
         icon: @image-url("assets/angulo-esquerdo.png");
-
         clicked => {
-            open_main_window(true, false);
+            Logic.window_main_open = true;
+            Logic.window_config_open = false;
         }
     }
 
     Switch {
         height: 22px;
-        text: current_theme ? "Dark" : "Light";
-        checked: current_theme ? true : false;
+        text: Theme.dark_mode ? "Dark" : "Light";
+        checked: Theme.dark_mode ? true : false;
         toggled => {
-            Theme.dark_mode = current_theme ? false : true;
-            Theme.dark_mode_callback(current_theme)
+            Theme.dark_mode = Theme.dark_mode ? false : true;
+            Theme.dark_mode_callback(Theme.dark_mode)
         }
     }
 
     pop := AboutPopup {
         x: (parent.width - self.width) / 2;
         y: (parent.height - self.height) / 2;
-        app_version: app_version;
-
-        open_git => {
-            open_git();
-        }
     }
 
     CustomButton {

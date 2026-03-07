@@ -1,7 +1,11 @@
 [package]
 name = "linux-tool"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
+authors = ["Enzo Queiroz Costa <enzo415611@gmail.com>"]
+license = "GPL-3.0-only"
+description = "AUR and Pacman package manager helper with Slint UI"
+repository = "https://github.com/Enzo415611/linux-tool"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -20,4 +24,3 @@ tokio = { version = "1.49.0", features = ["macros", "rt-multi-thread"] }
 
 [build-dependencies]
 slint-build = "1.15.0"
-
