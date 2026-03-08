@@ -1,55 +1,45 @@
 import { TextEdit, Button, VerticalBox, LineEdit } from "std-widgets.slint";
 import { Terminal } from "terminal.slint";
-import { Theme, PackageInfo } from "../../logic.slint";
+import { Theme, PackageInfo, Logic } from "../../logic.slint";
 import { CustomButton } from "../custom_button.slint";
 
 export component PkgInfo inherits VerticalBox {
     width: 50%;
     padding: 0px;
     spacing: 5px;
-    visible: pkg_info_is_visible;
+    visible: Logic.pkg_info_is_visible;
 
-    in-out property <bool> pkg_info_is_visible: false;
-    in-out property <string> package-base;
-    in-out property <string> version;
-    in-out property <string> description;
-    in-out property <string> maintainer;
     in-out property <string> terminal_output;
-    in-out property <bool> pkg_is_installed;
-    in-out property <string> repository;
-    in-out property <bool> terminal_is_visible;
 
-    callback install_pkg(string);
-    callback uninstall_pkg(string);
     callback send_terminal_input(string);
-    
+
     HorizontalLayout {
         spacing: 10px;
-        
+
         Text {
-            color: Theme.text_color; 
+            color: Theme.text_color;
             font-size: 19px;
             height: 28px;
-            text: package-base;
+            text: Logic.pkg_selected.package-base;
         }
 
-        if pkg_is_installed == true: CustomButton {
+        if Logic.pkg_selected.is-installed == true: CustomButton {
             text: "Uninstall";
             font-size: 15px;
             width: 70px;
             clicked => {
-                terminal_is_visible = true;
-                uninstall_pkg(package-base);
+                Logic.terminal_is_visible = true;
+                Logic.uninstall_pkg(Logic.pkg_selected.package-base);
             }
         }
-        
-        if pkg_is_installed == false: CustomButton {
+
+        if Logic.pkg_selected.is-installed == false: CustomButton {
             text: "Install";
             font-size: 15px;
             width: 60px;
             clicked => {
-                terminal_is_visible = true;
-                install_pkg(package-base);
+                Logic.terminal_is_visible = true;
+                Logic.install_pkg(Logic.pkg_selected.package-base);
             }
         }
 
@@ -58,7 +48,7 @@ export component PkgInfo inherits VerticalBox {
             width: 30px;
             background: gray;
             clicked => {
-                terminal_is_visible = !terminal_is_visible;
+                Logic.terminal_is_visible = !Logic.terminal_is_visible;
             }
         }
     }
@@ -67,36 +57,29 @@ export component PkgInfo inherits VerticalBox {
         color: Theme.text_color;
         font-size: 15px;
         height: 28px;
-        text: "Version: " + version;
+        text: "Version: " + Logic.pkg_selected.version;
     }
 
     Text {
         color: Theme.text_color;
         font-size: 15px;
         height: 28px;
-        text: "Maintainer: " + maintainer;
+        text: "Maintainer: " + Logic.pkg_selected.maintainer;
     }
-    
+
     Text {
         color: Theme.text_color;
         font-size: 15px;
         height: 28px;
-        text: "Repository: " + repository;
+        text: "Repository: " + Logic.pkg_selected.repo;
     }
 
     TextEdit {
-        text: description;
+        text: Logic.pkg_selected.description;
         font-size: 15px;
         read-only: true;
         height: 20%;
     }
-    
-    Terminal {
-        output: terminal_output;
-        visible: terminal_is_visible;
 
-        send_terminal_input(text) => {
-            send_terminal_input(text);
-        }
-    }
+    Terminal {}
 }

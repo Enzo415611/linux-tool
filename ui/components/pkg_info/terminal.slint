@@ -7,16 +7,16 @@ import {
     Button,
     HorizontalBox,
 } from "std-widgets.slint";
+import { Logic } from "../../logic.slint";
 
 
 export component Terminal inherits VerticalBox {
     height: 400px;
     padding: 0px;
-    in-out property <string> output;
-    callback send_terminal_input(string);
-
+    visible: Logic.terminal_is_visible;
+    
     TextEdit {
-        text: output;
+        text: Logic.terminal_output;
         font-size: 15px;
         read-only: true;
         changed text => {
@@ -28,7 +28,9 @@ export component Terminal inherits VerticalBox {
         LineEdit {
             font-size: 15px; 
             accepted(text) => {
-                send_terminal_input(text);
+                Logic.send_terminal_input(text);
+                self.text = "";
+                
             }
         }
     }

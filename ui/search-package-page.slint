@@ -44,44 +44,11 @@ export component SearchPackagePage inherits VerticalLayout {
                 border-width: 0.8px;
                 border-radius: 8px;
     
-                PkgList {
-                    pkgs_info: Logic.pkgs_info;
-    
-                    pkg_selected(pkg-selected) => {
-                        Logic.pkg_selected = pkg-selected;
-                        Logic.pkg_selected_callback(pkg-selected.package-base);
-                    }
-    
-                    pkg_info_is_visible(is) => {
-                        Logic.pkg_info_is_visible = is;
-                    }
-                }
+                PkgList {}
             }
     
-            PkgInfo {
-                pkg_info_is_visible: Logic.pkg_info_is_visible;
-                package-base: Logic.pkg_selected.package-base;
-                version: Logic.pkg_selected.version;
-                description: Logic.pkg_selected.description;
-                maintainer: Logic.pkg_selected.maintainer;
-                terminal_output: Logic.terminal_output;
-                pkg_is_installed: Logic.pkg_selected.is-installed;
-                repository: Logic.pkg_selected.repo;
-                terminal_is_visible: Logic.terminal_is_visible;
-    
-                send_terminal_input(text) => {
-                    Logic.terminal_input = text;
-                    Logic.send_terminal_input(text);
-                }
-    
-                install_pkg => {
-                    Logic.install_pkg(Logic.pkg_selected.package-base);
-                }
-    
-                uninstall_pkg => {
-                    Logic.uninstall_pkg(Logic.pkg_selected.package-base);
-                }
-            }
+            PkgInfo {}
+            
         }
     }
 }
