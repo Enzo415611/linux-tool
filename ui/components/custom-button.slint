@@ -12,14 +12,12 @@ export component CustomButton inherits Rectangle {
     in-out property <length> font-size;
     property <color> default-back;
     callback clicked();
-    
-    animate background {
-        duration: 250ms ;
-    }
-    
+
+    animate background { duration: 250ms; }
+
     Text {
         font-size: font-size;
-        color: Theme.text_color; 
+        color: Theme.text_color;
         text: text;
     }
 

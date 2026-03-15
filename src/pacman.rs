@@ -42,10 +42,14 @@ pub fn pacman_db(pkg_name: &str, app_state: Arc<Mutex<AppState>>) -> Rc<VecModel
     let alpm_handle = Alpm::new("/", "/var/lib/pacman");
     let mut repos: Vec<String> = Vec::new();
     let mut pkgs: Vec<PackageInfo> = Vec::new();
-    let last_name = app_state.lock().unwrap().last_name.clone();
+    let last_name = {
+        let app_state = app_state.lock().unwrap();
+        app_state.last_name.clone()
+    };
+    let mut app_state = app_state.lock().unwrap();
 
     if pkg_name == last_name {
-        let last_pacman_packages = { &app_state.lock().unwrap().last_pacman_packages };
+        let last_pacman_packages = { &app_state.last_pacman_packages };
         for pkg in last_pacman_packages {
             pkgs.push(PackageInfo {
                 package_base: pkg.package_base.to_shared_string(),
@@ -74,13 +78,13 @@ pub fn pacman_db(pkg_name: &str, app_state: Arc<Mutex<AppState>>) -> Rc<VecModel
             }
 
             let sync_dbs = al.syncdbs();
-
+            
+            let mut package: PackageInfo;
+            
             for db in sync_dbs {
                 if let Ok(pkg) = db.pkg(pkg_name) {
-                    let package: PackageInfo;
 
                     let desc = pkg.desc().unwrap_or_else(|| "NA");
-
                     let maintainer = pkg.packager().unwrap_or_else(|| "NA");
 
                     package = PackageInfo {
@@ -95,8 +99,6 @@ pub fn pacman_db(pkg_name: &str, app_state: Arc<Mutex<AppState>>) -> Rc<VecModel
                     pkgs.push(package);
 
                     app_state
-                        .lock()
-                        .unwrap()
                         .last_pacman_packages
                         .push(PacmanPackage::new(
                             pkg.name().to_string(),

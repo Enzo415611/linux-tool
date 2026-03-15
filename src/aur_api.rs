@@ -7,13 +7,17 @@ use crate::{AppState, PackageInfo};
 
 #[derive(Deserialize, Debug, Default)]
 struct AurResponse {
-    pub resultcount: u32,
+    
+    #[serde(rename = "resultcount")]
+    pub _resultcount: u32,
+    
     pub results: Vec<AurPackage>,
 
     #[serde(rename = "type")]
-    pub response_type: String,
-
-    pub version: u8,
+    pub _response_type: String,
+    
+    #[serde(rename = "version")]
+    pub _version: u8,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -61,6 +65,7 @@ pub struct AurPackage {
     pub version: String,
 }
 
+
 pub fn yay_is_installed() -> bool {
     if let Ok(alpm) = alpm::Alpm::new("/", "/var/lib/pacman") {
         let local_db = alpm.localdb();
@@ -76,14 +81,14 @@ pub fn yay_is_installed() -> bool {
 
 pub async fn search_aur_pkg(
     pkg_name: &str,
-    app_state: &mut AppState,
+    app_state: Arc<Mutex<AppState>>, 
+    is_pkg_category: bool
 ) -> Result<Vec<AurPackage>, reqwest::Error> {
-    if app_state.last_name == pkg_name {
-        Ok(app_state.last_aur_packages.clone())
-    } else {
-        app_state.last_name = pkg_name.into();
+    let mut app_state = app_state.lock().unwrap();
+    
+    if is_pkg_category {
         let result: AurResponse = reqwest::get(format!(
-            "https://aur.archlinux.org/rpc/v5/search/{}",
+            "https://aur.archlinux.org/rpc/v5/info?arg[]={}",
             pkg_name
         ))
         .await?
@@ -91,20 +96,37 @@ pub async fn search_aur_pkg(
         .await?;
 
         Ok(result.results)
+    } else {
+        if app_state.last_name == pkg_name {
+            Ok(app_state.last_aur_packages.clone())
+        } else {
+            app_state.last_name = pkg_name.into();
+            let result: AurResponse = reqwest::get(format!(
+                "https://aur.archlinux.org/rpc/v5/search/{}",
+                pkg_name
+            ))
+            .await?
+            .json::<AurResponse>()
+            .await?;
+
+            Ok(result.results)
+        }
     }
+    
 }
 
 pub async fn aur_db(app_state: Arc<Mutex<AppState>>, pkg_name: &str) -> Vec<PackageInfo> {
     let pkgs = {
-        let mut state = app_state.lock().unwrap();
-        search_aur_pkg(&pkg_name, &mut state).await
+        let app_state = Arc::clone(&app_state);
+        search_aur_pkg(&pkg_name, app_state, false).await
     };
 
     if let Ok(pkgs) = pkgs {
         let mut pkgs_info: Vec<PackageInfo> = vec![];
         let mut packages_info: PackageInfo;
         let default = String::from("NA");
-
+        let mut app_state = app_state.lock().unwrap();
+        
         for pkg in &pkgs {
             let description = &pkg.description.as_ref().unwrap_or_else(|| &default);
             let maintainer = &pkg.maintainer.as_ref().unwrap_or_else(|| &default);
@@ -121,7 +143,7 @@ pub async fn aur_db(app_state: Arc<Mutex<AppState>>, pkg_name: &str) -> Vec<Pack
             pkgs_info.push(packages_info);
         }
 
-        app_state.lock().unwrap().last_aur_packages = pkgs;
+        app_state.last_aur_packages = pkgs;
 
         pkgs_info
     } else {

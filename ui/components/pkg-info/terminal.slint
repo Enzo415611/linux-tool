@@ -14,7 +14,7 @@ export component Terminal inherits VerticalBox {
     height: 400px;
     padding: 0px;
     visible: Logic.terminal_is_visible;
-    
+
     TextEdit {
         text: Logic.terminal_output;
         font-size: 15px;
@@ -26,11 +26,10 @@ export component Terminal inherits VerticalBox {
 
     HorizontalBox {
         LineEdit {
-            font-size: 15px; 
+            font-size: 15px;
             accepted(text) => {
                 Logic.send_terminal_input(text);
                 self.text = "";
-                
             }
         }
     }

@@ -1,0 +1,89 @@
+import { Logic, Pages } from "logic.slint";
+import { VerticalBox, GridBox, ListView, ComboBox } from "std-widgets.slint";
+import { CustomButton } from "components/custom-button.slint";
+import { PkgList } from "components/pkg-list.slint";
+import { PkgInfo } from "components/pkg-info/pkg-info.slint";
+
+export component PopularPackages inherits VerticalBox {
+    visible: Logic.current_page == Pages.PopularPackagesPage;
+    height: 100%;
+    padding: 10px;
+
+
+    HorizontalLayout {
+        alignment: LayoutAlignment.center;
+        ComboBox {
+            width: 500px;
+            current-value: Logic.current_pkg_category;
+            model: [
+                "Games",
+                "Development",
+                "Communication",
+                "Graphics",
+                "Internet",
+                "Office",
+                "Multimedia",
+                "Drivers & Hardware"
+            ];
+            selected(current-value) => {
+                if current-value == "Drivers & Hardware" {
+                    Logic.current_pkg_category = "DriversHardware";
+                    Logic.set_pkg_category(Logic.current_pkg_category);
+
+                } else {
+                    Logic.current_pkg_category = current-value;
+                    Logic.set_pkg_category(Logic.current_pkg_category);
+                }
+
+                
+            }
+        }
+    }
+
+    if !Logic.current_pkg_category.is-empty: GridBox {
+        VerticalBox {
+            padding: 5px;
+            Rectangle {
+                border-color: black;
+                border-width: 0.8px;
+                border-radius: 10px;
+                height: 96%;
+
+                ListView {
+                    for pkg in Logic.pkgs_info_category: HorizontalLayout {
+                        alignment: LayoutAlignment.center;
+                        CustomButton {
+                            border-color: black;
+                            border-width: 0.8px;
+                            width: 100%;
+                            font-size: 14px;
+                            text: pkg.package-base;
+                            clicked => {
+                                Logic.pkg_selected = pkg;
+                                Logic.pkg_info_is_visible = true;
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+
+        if !Logic.pkg_selected.package-base.is-empty: VerticalBox {
+            Rectangle {
+                height: 96%;
+                width: 50%;
+                border-color: black;
+                border-width: 0.8px;
+                border-radius: 10px; 
+                padding: 10px;
+                
+                PkgInfo {
+                    width: 100%;
+                    height: 100%;
+                    padding: 5px;
+                }
+            }
+        }
+    }
+}

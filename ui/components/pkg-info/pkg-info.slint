@@ -1,17 +1,15 @@
 import { TextEdit, Button, VerticalBox, LineEdit } from "std-widgets.slint";
 import { Terminal } from "terminal.slint";
 import { Theme, PackageInfo, Logic } from "../../logic.slint";
-import { CustomButton } from "../custom_button.slint";
+import { CustomButton } from "../custom-button.slint";
 
 export component PkgInfo inherits VerticalBox {
-    width: 50%;
-    padding: 0px;
-    spacing: 5px;
+    width: 100%;
+    padding: 5px;
+    spacing: 0px;
     visible: Logic.pkg_info_is_visible;
+    height: 95%;
 
-    in-out property <string> terminal_output;
-
-    callback send_terminal_input(string);
 
     HorizontalLayout {
         spacing: 10px;
@@ -81,5 +79,5 @@ export component PkgInfo inherits VerticalBox {
         height: 20%;
     }
 
-    Terminal {}
+    Terminal { }
 }

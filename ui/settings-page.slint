@@ -7,21 +7,13 @@ import {
     Button,
     StandardButton,
 } from "std-widgets.slint";
-import { CustomButton } from "components/custom_button.slint";
-import { Theme, Logic } from "logic.slint";
+import { CustomButton } from "components/custom-button.slint";
+import { Theme, Logic, Pages } from "logic.slint";
 import { AboutPopup } from "components/about-popup.slint";
 
 export component SettingsPage inherits VerticalBox {
-    visible: Logic.window_config_open;
+    visible: Logic.current_page == Pages.SettingsPage;
     padding: 5px;
-
-    CustomButton {
-        icon: @image-url("assets/angulo-esquerdo.png");
-        clicked => {
-            Logic.window_main_open = true;
-            Logic.window_config_open = false;
-        }
-    }
 
     Switch {
         height: 22px;

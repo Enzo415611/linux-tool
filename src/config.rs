@@ -18,6 +18,5 @@ impl Default for AppConfig {
 
 pub fn load_config() -> Result<AppConfig> {
     let cfg: AppConfig = confy::load("linux-tool", Some("config"))?;
-    //_=confy::store("linux-tool", "config", AppConfig::default());
     Ok(cfg)
 }

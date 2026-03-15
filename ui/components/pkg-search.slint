@@ -1,33 +1,37 @@
-import { HorizontalBox, VerticalBox, LineEdit, Button } from "std-widgets.slint";
-import { CustomButton } from "custom_button.slint";
+import {
+    HorizontalBox,
+    VerticalBox,
+    LineEdit,
+    Button,
+} from "std-widgets.slint";
+import { CustomButton } from "custom-button.slint";
 import { Logic } from "../logic.slint";
 
 export component PkgSearch inherits HorizontalBox {
     padding: 0px;
     height: 35px;
     alignment: LayoutAlignment.center;
-    
+
     LineEdit {
         width: 700px;
         font-size: 15px;
         placeholder-text: "Search Packages";
         input-type: InputType.text;
-        
+
         accepted(pkg_name) => {
             Logic.pkg_name = pkg_name;
-            
+
             Logic.loading_pkgs = true;
             Logic.search_pkg(pkg_name);
         }
-        
+
         edited(text) => {
-            Logic.pkg_name = text; 
+            Logic.pkg_name = text;
         }
     }
-    
-    
+
     CustomButton {
-        icon: @image-url("../assets/search.png"); 
+        icon: @image-url("../assets/search.png");
         clicked => {
             Logic.search_pkg(Logic.pkg_name);
             Logic.loading_pkgs = true;

@@ -1,19 +1,22 @@
 import { Button, GridBox, ListView, VerticalBox } from "std-widgets.slint";
 import { PackageInfo, Logic } from "../logic.slint";
-import { CustomButton } from "custom_button.slint";
+import { CustomButton } from "custom-button.slint";
 
 export component PkgList inherits ListView {
-    height: 100%;
     width: 100%;
-    
+    height: 100%;
+
     for pkg in Logic.pkgs_info: HorizontalLayout {
-    
+
         padding: 0px;
-        
+
         CustomButton {
-            font-size: 13px;
-            width: 100%; 
+            font-size: 14px;
+            width: 100%;
             text: pkg.package-base;
+            border-color: black;
+            border-width: 0.8px;
+
             clicked => {
                 Logic.pkg_selected = pkg;
                 Logic.pkg_selected_callback(pkg.package-base);

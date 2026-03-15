@@ -17,23 +17,78 @@ import {
 
 import { PkgSearch } from "components/pkg-search.slint";
 import { PkgList } from "components/pkg-list.slint";
-import { PkgInfo } from "components//pkg_info/pkg_info.slint";
+import { PkgInfo } from "components//pkg-info/pkg-info.slint";
 import { AboutPopup } from "components/about-popup.slint";
-import { CustomButton } from "components/custom_button.slint";
+import { CustomButton } from "components/custom-button.slint";
 import { SettingsPage } from "settings-page.slint";
-import { Theme, Logic } from "logic.slint";
+import { Theme, Logic, Pages } from "logic.slint";
 import { SearchPackagePage } from "search-package-page.slint";
+import {
+    PopularPackages,
+    PopularPackages,
+    PopularPackages,
+} from "popular-packages-page.slint";
 export { Theme, Logic }
 
 export component AppWindow inherits Window {
     title: "linux-tool";
-    preferred-width: 800px;
+    preferred-width: 1000px;
     preferred-height: 800px;
     background: Theme.background;
-    
-    if Logic.window_config_open: SettingsPage {
-        visible: Logic.window_config_open;
+
+    VerticalLayout {
+        padding: 0px;
+        spacing: 0px;
+
+        HorizontalLayout {
+            padding: 7px;
+            alignment: LayoutAlignment.center;
+            height: 40px;
+            width: 100%;
+
+            Rectangle {
+                border-color: black;
+                border-width: 0.8px;
+                border-radius: 10px;
+                height: 30px;
+
+                HorizontalLayout {
+                    alignment: LayoutAlignment.center;
+                    spacing: 8px;
+                    CustomButton {
+                        text: "Search Package";
+                        width: 150px;
+                        font-size: 17px;
+                        clicked => {
+                            Logic.current_page = Pages.SearchPackagesPage;
+                        }
+                    }
+
+                    CustomButton {
+                        text: "Popular Packages";
+                        width: 150px;
+                        font-size: 17px;
+                        clicked => {
+                            Logic.current_page = Pages.PopularPackagesPage;
+                            Logic.pkg_info_is_visible = false;
+                            Logic.pkg_selected.package-base = "";
+                        }
+                    }
+
+                    CustomButton {
+                        text: "Settings";
+                        width: 150px;
+                        font-size: 17px;
+                        clicked => {
+                            Logic.current_page = Pages.SettingsPage;
+                        }
+                    }
+                }
+            }
+        }
+
+        if Logic.current_page == Pages.SearchPackagesPage: SearchPackagePage { }
+        if Logic.current_page == Pages.PopularPackagesPage: PopularPackages { }
+        if Logic.current_page == Pages.SettingsPage: SettingsPage { }
     }
-    
-    SearchPackagePage {}
 }

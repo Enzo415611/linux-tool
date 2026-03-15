@@ -4,11 +4,16 @@ export struct PackageInfo {
     description: string,
     maintainer: string,
     is_installed: bool,
-    repo: string
+    repo: string}
+
+export enum Pages {
+    SearchPackagesPage,
+    PopularPackagesPage,
+    SettingsPage
 }
 
-
 export global Logic {
+    in-out property <Pages> current_page;
     in-out property <string> pkg_name;
     in-out property <[PackageInfo]> pkgs_info;
     in-out property <PackageInfo> pkg_selected;
@@ -18,29 +23,29 @@ export global Logic {
     in-out property <bool> window_main_open: true;
     in-out property <bool> window_config_open: false;
     in-out property <bool> loading_pkgs;
-    in-out property <bool> aur_is_installed;
+    in-out property <bool> yay_is_installed;
     in-out property <bool> app_theme: Theme.dark_mode;
     in-out property <string> app_version;
-    
+    in-out property <string> current_pkg_category;
+    in-out property <[PackageInfo]> pkgs_info_category;
+
     callback send_terminal_input(string);
     callback search_pkg(string);
     callback install_pkg(string);
     callback uninstall_pkg(string);
     callback pkg_selected_callback(string);
     callback open_git();
+    callback set_pkg_category(category: string);
 
-    
     public function append_terminal_out(text: string) {
         terminal_output = terminal_output + text;
     }
-    
 }
 
 export global Theme {
     in-out property <bool> dark_mode;
     callback dark_mode_callback(bool);
-    
-    
+
     in property <color> background: dark_mode ? #46464d : white;
     in property <color> text_color: dark_mode ? white : black;
 }

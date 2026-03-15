@@ -2,22 +2,30 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod aur_api;
+mod config;
 mod package_control;
 mod pacman;
+mod pkg_by_category;
 mod search_callback;
 mod terminal;
-mod config;
 
 use std::{
     env,
     error::Error,
-    sync::{Arc, Mutex}, thread, time::Duration,
+    sync::{Arc, Mutex},
+    thread,
+    time::Duration,
 };
 
-use slint::ComponentHandle;
+use slint::{ComponentHandle, SharedString};
 
 use crate::{
-    aur_api::{AurPackage, yay_is_installed}, config::{AppConfig, load_config}, package_control::pkg_is_installed, search_callback::search_pkg_callback, terminal::terminal
+    aur_api::{yay_is_installed, AurPackage},
+    config::{load_config, AppConfig},
+    package_control::pkg_is_installed,
+    pkg_by_category::pkg_by_category,
+    search_callback::search_pkg_callback,
+    terminal::terminal,
 };
 
 use self::pacman::PacmanPackage;
@@ -29,7 +37,7 @@ pub struct AppState {
     last_aur_packages: Vec<AurPackage>,
     last_pacman_packages: Vec<PacmanPackage>,
     package_info: PackageInfo,
-    aur_is_installed: bool
+    aur_is_installed: bool,
 }
 
 impl AppState {
@@ -38,14 +46,14 @@ impl AppState {
         last_aur_packages: Vec<AurPackage>,
         last_pacman_packages: Vec<PacmanPackage>,
         package_info: PackageInfo,
-        aur_is_installed: bool
+        aur_is_installed: bool,
     ) -> Self {
         Self {
             last_name,
             last_aur_packages,
             last_pacman_packages,
             package_info,
-            aur_is_installed
+            aur_is_installed,
         }
     }
 }
@@ -53,36 +61,37 @@ impl AppState {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     const VERSION: &str = env!("CARGO_PKG_VERSION");
-    
+
     let app_state_arc = Arc::new(Mutex::new(AppState::new(
         "".into(),
         vec![],
         vec![],
         PackageInfo::default(),
-        yay_is_installed()
+        yay_is_installed(),
     )));
-
 
     let cfg = load_config()?;
     println!("config: {:?}", cfg);
     let ui = AppWindow::new()?;
     let logic = ui.global::<Logic>();
     let theme = ui.global::<Theme>();
-    
+
     logic.set_app_version(VERSION.into());
     theme.set_dark_mode(cfg.app_theme);
     // salva o tema em /.config/linux-tool/config.toml
-    theme.on_dark_mode_callback(move |current_theme|{
-        _=confy::store("linux-tool", "config", AppConfig {
-            app_theme: current_theme
-        });
+    theme.on_dark_mode_callback(move |current_theme| {
+        _ = confy::store(
+            "linux-tool",
+            "config",
+            AppConfig {
+                app_theme: current_theme,
+            },
+        );
     });
 
-    let aur_is_installed = {
-        app_state_arc.lock().unwrap().aur_is_installed
-    };
+    let yay_is_installed = { app_state_arc.lock().unwrap().aur_is_installed };
 
-    logic.set_aur_is_installed(aur_is_installed);
+    logic.set_yay_is_installed(yay_is_installed);
 
     let ui_handle = ui.as_weak();
     let app_state_clone = Arc::clone(&app_state_arc);
@@ -106,7 +115,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
             is_installed: logic.get_pkg_selected().is_installed,
         };
 
-
         logic.set_pkg_selected(PackageInfo {
             description: logic.get_pkg_selected().description,
             package_base: logic.get_pkg_selected().package_base,
@@ -123,40 +131,50 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let app_state_clone3 = Arc::clone(&app_state_arc);
     let ui_handle4 = ui.as_weak();
-    thread::spawn(move|| {
-        loop {
-             let is_installed = {
-                 let app_state = app_state_clone3.lock().unwrap();
-                 let pkg_name = app_state.package_info.package_base.to_string();
-                 let is_installed = pkg_is_installed(&pkg_name).unwrap_or_else(|_| false);
-                 is_installed
-             };
+    thread::spawn(move || loop {
+        let is_installed = {
+            let app_state = app_state_clone3.lock().unwrap();
+            let pkg_name = app_state.package_info.package_base.to_string();
+            let is_installed = pkg_is_installed(&pkg_name).unwrap_or_else(|_| false);
+            is_installed
+        };
 
+        let ui_handle = ui_handle4.clone();
+        thread::sleep(Duration::from_millis(300));
 
-            let ui_handle = ui_handle4.clone();
-            thread::sleep(Duration::from_millis(300));
-
-            slint::invoke_from_event_loop(move || {
-                if let Some(ui) = ui_handle.upgrade() {
-                    let logic = ui.global::<Logic>();
-                    let pkg = logic.get_pkg_selected();
-                    logic.set_pkg_selected(PackageInfo {
-                        package_base: pkg.package_base,
-                        description: pkg.description,
-                        maintainer: pkg.maintainer,
-                        version: pkg.version,
-                        repo: pkg.repo,
-                        is_installed: is_installed
-                    });
-                }
-            }).unwrap();
-        }
-
+        slint::invoke_from_event_loop(move || {
+            if let Some(ui) = ui_handle.upgrade() {
+                let logic = ui.global::<Logic>();
+                let pkg = logic.get_pkg_selected();
+                logic.set_pkg_selected(PackageInfo {
+                    package_base: pkg.package_base,
+                    description: pkg.description,
+                    maintainer: pkg.maintainer,
+                    version: pkg.version,
+                    repo: pkg.repo,
+                    is_installed: is_installed,
+                });
+            }
+        })
+        .unwrap();
     });
 
-
     logic.on_open_git(|| {
-        _=open::that("https://github.com/Enzo415611/Enzo415611").unwrap();
+        _ = open::that("https://github.com/Enzo415611/Enzo415611").unwrap();
+    });
+
+    let app_state_clone4 = Arc::clone(&app_state_arc);
+    let ui_handle4 = ui.as_weak();
+    let mut last_category: String = String::new();
+
+    logic.on_set_pkg_category(move |category| {
+        let ui_handle = ui_handle4.unwrap();
+
+        if last_category == category.to_string() {
+        } else {
+            last_category = category.to_string();
+            pkg_by_category(category.as_str(), ui_handle, app_state_clone4.clone());
+        }
     });
 
     ui.run()?;

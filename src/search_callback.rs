@@ -19,19 +19,20 @@ pub fn search_pkg_callback(
     logic.on_search_pkg({
         move |pkg_name| {
             let handle = ui_handle.unwrap();
-            let app_state = Arc::clone(&app_state_arc);
-            let app_state1 = Arc::clone(&app_state_arc);
+            let app_state_clone = Arc::clone(&app_state_arc);
             
-            // pacman
             slint::spawn_local(async_compat::Compat::new(async move {
                 let logic = handle.global::<Logic>();
                 _ = tokio::time::sleep(Duration::from_millis(1000)).await;
+                let app_state = Arc::clone(&app_state_clone);
+                
 
                 let aur_is_installed = yay_is_installed();
 
-                let pacman_pkg = pacman_db(pkg_name.as_str(), app_state1);
+                let pacman_pkg = pacman_db(pkg_name.as_str(),app_state);
 
                 if aur_is_installed {
+                    let app_state = Arc::clone(&app_state_clone);
                     let aur_pkg = aur_db(app_state, &pkg_name).await;
 
                     for pkg in aur_pkg {
