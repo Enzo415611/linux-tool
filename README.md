@@ -68,12 +68,6 @@ Selecione → veja detalhes (versão, mantenedor, descrição).
 Clique em Instalar → terminal abre com o comando correto (pacman -S ou yay -S).
 
 
-  <img width="800" alt="Tela principal de busca" src="https://github.com/user-attachments/assets/9a87a46f-7b75-4dc5-849e-f8ee12ff8420">
-  <img width="800" alt="Detalhes do pacote e instalação" src="https://github.com/user-attachments/assets/75cd0acb-5ee7-4a59-b6c3-e29472d6198c">
-  
-
-
-  Interface em ação: busca e detalhes de pacotes
 
 
 ⚖️ Licença
